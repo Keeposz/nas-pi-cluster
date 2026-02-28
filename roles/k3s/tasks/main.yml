@@ -1,0 +1,65 @@
+---
+- name: Create Btrfs subvolume for K3s data
+  command: btrfs subvolume create {{ k3s_data_dir }}
+  args:
+    creates: "{{ k3s_data_dir }}"
+
+- name: Set permissions on K3s data directory
+  file:
+    path: "{{ k3s_data_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Check if K3s is already installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Install K3s
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - server \
+      --write-kubeconfig-mode 644 \
+      --disable servicelb \
+      --data-dir {{ k3s_data_dir }}
+  when: not k3s_binary.stat.exists
+
+- name: Wait for K3s to be ready
+  shell: k3s kubectl get nodes
+  register: k3s_ready
+  retries: 30
+  delay: 10
+  until: k3s_ready.rc == 0
+  when: not k3s_binary.stat.exists
+
+- name: Create .kube directory for jonas
+  file:
+    path: /home/jonas/.kube
+    state: directory
+    owner: jonas
+    group: jonas
+    mode: '0755'
+
+- name: Copy kubeconfig for jonas
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/jonas/.kube/config
+    owner: jonas
+    group: jonas
+    mode: '0600'
+    remote_src: yes
+
+- name: Fix server address in kubeconfig
+  replace:
+    path: /home/jonas/.kube/config
+    regexp: 'https://127.0.0.1:6443'
+    replace: 'https://192.168.0.50:6443'
+
+- name: Add kubectl alias and KUBECONFIG export
+  blockinfile:
+    path: /home/jonas/.bashrc
+    block: |
+      alias k="kubectl"
+      export KUBECONFIG=/home/jonas/.kube/config
+    owner: jonas
+    create: yes

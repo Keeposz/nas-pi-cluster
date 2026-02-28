@@ -1,0 +1,17 @@
+---
+base_hostname: nas-pi
+nvme_mount: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363
+k3s_data_dir: "{{ nvme_mount }}/k3s-data"
+media_path: "{{ nvme_mount }}/NAS-PI/PLEX"
+domain: keeposz.dev
+git_repo: git@github.com:Keeposz/nas-pi-cluster.git
+
+base_firewall_tcp_ports:
+  - 22
+  - 6443
+  - 80
+  - 443
+  - 8080
+  - 32400
+base_firewall_udp_ports:
+  - 8472

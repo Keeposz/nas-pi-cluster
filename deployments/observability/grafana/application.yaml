@@ -1,0 +1,56 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/observability/grafana
+    targetRevision: HEAD
+    helm:
+      releaseName: grafana
+      valuesObject:
+        grafana:
+          adminUser: admin
+          adminPassword: ""
+          existingSecret: grafana-admin
+          persistence:
+            enabled: true
+            size: 2Gi
+            storageClassName: local-path
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+          datasources:
+            datasources.yaml:
+              apiVersion: 1
+              datasources:
+                - name: Prometheus
+                  type: prometheus
+                  url: http://prometheus-server.observability.svc.cluster.local
+                  access: proxy
+                  isDefault: true
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            hosts:
+              - grafana.keeposz.dev
+            tls:
+              - secretName: grafana-tls
+                hosts:
+                  - grafana.keeposz.dev
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: observability
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

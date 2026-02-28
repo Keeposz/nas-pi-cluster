@@ -1,0 +1,4 @@
+secrets/
+*.swp
+*.swo
+.DS_Store

@@ -1,0 +1,7 @@
+---
+- name: Setup NAS-PI Cluster
+  hosts: nas-pi
+  become: true
+  roles:
+    - k3s
+    - tailscale

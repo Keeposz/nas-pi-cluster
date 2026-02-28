@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale-subnet-router
+  namespace: tailscale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale-subnet-router
+  template:
+    metadata:
+      labels:
+        app: tailscale-subnet-router
+    spec:
+      serviceAccountName: tailscale-sa
+      containers:
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:latest
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-auth
+                  key: auth-key
+            - name: TS_ROUTES
+              value: "10.42.0.0/16,10.43.0.0/16"
+            - name: TS_KUBE_SECRET
+              value: "tailscale-state"
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_HOSTNAME
+              value: "nas-pi-cluster"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "25m"
+            limits:
+              memory: "64Mi"

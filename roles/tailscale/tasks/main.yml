@@ -1,0 +1,21 @@
+---
+- name: Check if Tailscale is installed
+  command: which tailscale
+  register: tailscale_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install Tailscale
+  shell: curl -fsSL https://tailscale.com/install.sh | sh
+  when: tailscale_check.rc != 0
+
+- name: Enable IP forwarding (for subnet routing)
+  sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding

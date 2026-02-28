@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  namespace: plex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+        - name: plex
+          image: lscr.io/linuxserver/plex:latest
+          ports:
+            - containerPort: 32400
+              name: plex-web
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Brussels"
+            - name: VERSION
+              value: "docker"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1536Mi"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: films
+              mountPath: /data/films
+              readOnly: true
+            - name: series
+              mountPath: /data/series
+              readOnly: true
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: plex-config
+        - name: films
+          hostPath:
+            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/FILMS
+        - name: series
+          hostPath:
+            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/SERIES

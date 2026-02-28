@@ -1,0 +1,58 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/observability/prometheus
+    targetRevision: HEAD
+    helm:
+      releaseName: prometheus
+      valuesObject:
+        prometheus:
+          alertmanager:
+            enabled: false
+          prometheus-pushgateway:
+            enabled: false
+          prometheus-node-exporter:
+            enabled: true
+            resources:
+              requests:
+                memory: "32Mi"
+                cpu: "25m"
+              limits:
+                memory: "64Mi"
+          server:
+            retention: "7d"
+            persistentVolume:
+              enabled: true
+              size: 10Gi
+              storageClass: local-path
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+            ingress:
+              enabled: true
+              ingressClassName: traefik
+              annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              hosts:
+                - prometheus.keeposz.dev
+              tls:
+                - secretName: prometheus-tls
+                  hosts:
+                    - prometheus.keeposz.dev
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: observability
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
