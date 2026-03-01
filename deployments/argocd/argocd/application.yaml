@@ -15,7 +15,7 @@ spec:
       valuesObject:
         argo-cd:
           global:
-            domain: argocd.keeposz.dev
+            domain: argocd.home.keeposz.dev
           server:
             resources:
               requests:
@@ -31,11 +31,11 @@ spec:
                 traefik.ingress.kubernetes.io/router.tls: "true"
                 cert-manager.io/cluster-issuer: letsencrypt-prod
               hosts:
-                - argocd.keeposz.dev
+                - argocd.home.keeposz.dev
               tls:
                 - secretName: argocd-tls
                   hosts:
-                    - argocd.keeposz.dev
+                    - argocd.home.keeposz.dev
           controller:
             resources:
               requests:
