@@ -16,6 +16,9 @@ spec:
         argo-cd:
           global:
             domain: argocd.home.keeposz.dev
+          configs:
+            params:
+              server.insecure: true
           server:
             resources:
               requests:
@@ -33,7 +36,7 @@ spec:
               hosts:
                 - argocd.home.keeposz.dev
               tls:
-                - secretName: argocd-tls
+                - secretName: argocd-server-tls
                   hosts:
                     - argocd.home.keeposz.dev
           controller:
