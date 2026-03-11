@@ -3,7 +3,7 @@ apiVersion: v2
 appVersion: "1.0"
 description: Sealed Secrets controller
 name: sealed-secrets
-version: 1.0
+version: "1.0"
 dependencies:
   - name: sealed-secrets
     version: "*"

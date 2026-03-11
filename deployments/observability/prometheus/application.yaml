@@ -53,6 +53,9 @@ spec:
     server: "https://kubernetes.default.svc"
     namespace: observability
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
