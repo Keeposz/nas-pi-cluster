@@ -45,8 +45,8 @@ spec:
               - grafana.home.keeposz.dev
             tls:
               - secretName: grafana-tls
-                hosts:
-                  - grafana.keeposz.dev
+                hosts:  
+                  - grafana.home.keeposz.dev
   destination:
     server: "https://kubernetes.default.svc"
     namespace: observability
