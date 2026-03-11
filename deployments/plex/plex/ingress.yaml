@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: plex.keeposz.dev
+    - host: plex.home.keeposz.dev
       http:
         paths:
           - path: /
