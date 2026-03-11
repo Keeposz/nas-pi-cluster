@@ -13,7 +13,7 @@ spec:
     helm:
       releaseName: stirling-pdf
       valuesObject:
-        stirling-pdf:
+        stirling-pdf-chart:
           ingress:
             enabled: true
             className: traefik
