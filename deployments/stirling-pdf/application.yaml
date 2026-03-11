@@ -14,14 +14,6 @@ spec:
       releaseName: stirling-pdf
       valuesObject:
         stirling-pdf-chart:
-          livenessProbe:
-            initialDelaySeconds: 120
-            periodSeconds: 15
-            failureThreshold: 5
-          readinessProbe:
-            initialDelaySeconds: 120
-            periodSeconds: 15
-            failureThreshold: 5
           ingress:
             enabled: true
             className: traefik
