@@ -44,11 +44,11 @@ spec:
               annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-prod
               hosts:
-                - prometheus.keeposz.dev
+                - prometheus.home.keeposz.dev
               tls:
                 - secretName: prometheus-tls
                   hosts:
-                    - prometheus.keeposz.dev
+                    - prometheus.home.keeposz.dev
   destination:
     server: "https://kubernetes.default.svc"
     namespace: observability
