@@ -42,7 +42,7 @@ spec:
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt-prod
             hosts:
-              - grafana.keeposz.dev
+              - grafana.home.keeposz.dev
             tls:
               - secretName: grafana-tls
                 hosts:
