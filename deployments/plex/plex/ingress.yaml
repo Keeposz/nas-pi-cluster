@@ -21,5 +21,5 @@ spec:
                   number: 32400
   tls:
     - hosts:
-        - plex.keeposz.dev
+        - plex.home.keeposz.dev
       secretName: plex-tls
