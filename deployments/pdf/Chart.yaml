@@ -1,0 +1,9 @@
+---
+apiVersion: v2
+name: stirling-pdf
+description: Stirling PDF
+version: "1.0"
+dependencies:
+  - name: stirling-pdf
+    version: "*"
+    repository: https://stirling-tools.github.io/Stirling-PDF-chart
