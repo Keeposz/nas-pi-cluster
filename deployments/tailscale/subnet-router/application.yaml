@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/tailscale-subnet-router
+    path: deployments/tailscale/subnet-router
     targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
