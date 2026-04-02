@@ -10,6 +10,8 @@ spec:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
     path: deployments/tailscale/subnet-router
     targetRevision: HEAD
+    directory:
+      exclude: "application.yaml"
   destination:
     server: "https://kubernetes.default.svc"
     namespace: tailscale
