@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recepten
+  namespace: recepten
+spec:
+  type: ClusterIP
+  selector:
+    app: recepten
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http

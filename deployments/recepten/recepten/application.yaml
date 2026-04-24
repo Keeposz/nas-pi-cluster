@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: recepten
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/recepten/recepten
+    targetRevision: HEAD
+    directory:
+      exclude: "application.yaml"
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: recepten
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: recepten
+  namespace: recepten
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: recepten.home.keeposz.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: recepten
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - recepten.home.keeposz.dev
+      secretName: recepten-tls
