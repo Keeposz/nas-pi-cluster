@@ -10,8 +10,8 @@ spec:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
     path: deployments/kube-system/traefik-config
     targetRevision: HEAD
-    directory:
-      exclude: "application.yaml"
+    helm:
+      releaseName: traefik-config
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kube-system

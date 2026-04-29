@@ -10,8 +10,8 @@ spec:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
     path: deployments/cert-manager/cert-manager-config
     targetRevision: HEAD
-    directory:
-      exclude: "application.yaml"
+    helm:
+      releaseName: cert-manager-config
   destination:
     server: "https://kubernetes.default.svc"
     namespace: cert-manager
@@ -21,4 +21,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  

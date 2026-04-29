@@ -10,8 +10,8 @@ spec:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
     path: deployments/recepten/recepten
     targetRevision: HEAD
-    directory:
-      exclude: "application.yaml"
+    helm:
+      releaseName: recepten
   destination:
     server: "https://kubernetes.default.svc"
     namespace: recepten

@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Traefik HelmChartConfig overrides
+name: traefik-config
+version: "1.0"

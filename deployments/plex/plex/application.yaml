@@ -10,8 +10,8 @@ spec:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
     path: deployments/plex/plex
     targetRevision: HEAD
-    directory:
-      exclude: "application.yaml"
+    helm:
+      releaseName: plex
   destination:
     server: "https://kubernetes.default.svc"
     namespace: plex

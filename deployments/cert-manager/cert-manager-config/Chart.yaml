@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: cert-manager ClusterIssuer and Cloudflare API token
+name: cert-manager-config
+version: "1.0"
