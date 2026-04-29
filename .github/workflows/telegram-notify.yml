@@ -1,0 +1,58 @@
+name: Telegram Notify
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, closed]
+  issues:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          REPO: ${{ github.repository }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            if [[ "$ACTION" == "closed" && "$PR_MERGED" == "true" ]]; then
+              EMOJI="✅"
+              VERB="merged"
+            elif [[ "$ACTION" == "closed" ]]; then
+              EMOJI="❌"
+              VERB="closed"
+            else
+              EMOJI="🔀"
+              VERB="$ACTION"
+            fi
+            MSG="${EMOJI} [${REPO}] PR ${VERB}
+          ${PR_TITLE}
+          by ${PR_AUTHOR}
+          ${PR_URL}"
+          else
+            MSG="📋 [${REPO}] Issue ${ACTION}
+          ${ISSUE_TITLE}
+          by ${ISSUE_AUTHOR}
+          ${ISSUE_URL}"
+          fi
+
+          curl -sS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}" \
+            --data-urlencode "disable_web_page_preview=false" \
+            -o /dev/null \
+            -w "HTTP %{http_code}\n"

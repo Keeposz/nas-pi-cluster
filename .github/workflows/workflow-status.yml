@@ -1,0 +1,46 @@
+name: Workflow Status
+
+on:
+  workflow_run:
+    workflows:
+      - Renovate
+      - Telegram Notify
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'failure' ||
+      github.event.workflow_run.name == 'Renovate'
+    steps:
+      - name: Send Telegram notification
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          if [[ "$CONCLUSION" == "failure" ]]; then
+            EMOJI="🔥"
+            MSG="${EMOJI} [${REPO}] Workflow failed: ${WORKFLOW}
+          ${URL}"
+          elif [[ "$CONCLUSION" == "success" && "$WORKFLOW" == "Renovate" ]]; then
+            EMOJI="🤖"
+            MSG="${EMOJI} [${REPO}] Renovate scan complete (no failures)
+          ${URL}"
+          else
+            exit 0
+          fi
+          curl -sS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}" \
+            --data-urlencode "disable_web_page_preview=true" \
+            -o /dev/null \
+            -w "HTTP %{http_code}\n"

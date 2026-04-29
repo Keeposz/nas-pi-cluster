@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "description": "Skip floating :latest tags (we want to stay on latest by restarting pods)",
+      "matchManagers": [
+        "kubernetes"
+      ],
+      "matchCurrentValue": "/^latest$/",
+      "enabled": false
+    },
+    {
+      "description": "Group all Helm chart updates per app into a single PR",
+      "matchManagers": [
+        "helmv3"
+      ],
+      "groupName": "{{depName}} chart"
+    }
+  ]
+}
