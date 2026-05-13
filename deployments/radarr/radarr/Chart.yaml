@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Radarr movie manager for the *arr stack
+name: radarr
+version: "1.0"

@@ -2,24 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plex
-  namespace: plex
+  name: radarr
+  namespace: media
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
-      app: plex
+      app: radarr
   template:
     metadata:
       labels:
-        app: plex
+        app: radarr
     spec:
       containers:
-        - name: plex
-          image: lscr.io/linuxserver/plex:latest
+        - name: radarr
+          image: lscr.io/linuxserver/radarr:5.14.0
           ports:
-            - containerPort: 32400
-              name: plex-web
+            - containerPort: 7878
+              name: radarr-web
           env:
             - name: PUID
               value: "1000"
@@ -27,29 +29,28 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/Brussels"
-            - name: VERSION
-              value: "docker"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "256Mi"
+              cpu: "100m"
             limits:
-              memory: "1536Mi"
-              cpu: "1500m"
+              memory: "768Mi"
+              cpu: "1000m"
           volumeMounts:
             - name: config
               mountPath: /config
             - name: films
-              mountPath: /data/films
-            - name: series
-              mountPath: /data/series
+              mountPath: /movies
+            - name: downloads
+              mountPath: /downloads
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: plex-config
+            claimName: radarr-config
         - name: films
           hostPath:
             path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/FILMS
-        - name: series
+        - name: downloads
           hostPath:
-            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/SERIES
+            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/MEDIA/downloads
+            type: DirectoryOrCreate

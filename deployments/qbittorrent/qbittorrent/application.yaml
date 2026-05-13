@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: qbittorrent
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/qbittorrent/qbittorrent
+    targetRevision: HEAD
+    helm:
+      releaseName: qbittorrent
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

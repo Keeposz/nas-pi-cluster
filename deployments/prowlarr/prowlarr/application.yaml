@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prowlarr
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/prowlarr/prowlarr
+    targetRevision: HEAD
+    helm:
+      releaseName: prowlarr
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

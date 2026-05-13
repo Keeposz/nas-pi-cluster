@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qbittorrent
+  namespace: media
+spec:
+  serviceName: qbittorrent
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.40.0
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "nordvpn"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gluetun-wg
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: SERVER_COUNTRIES
+              value: "Netherlands"
+            - name: TZ
+              value: "Europe/Brussels"
+            # Allow cluster traffic to reach qBittorrent WebUI through Gluetun's firewall.
+            # 10.42.0.0/16 = k3s default pod CIDR, 10.43.0.0/16 = k3s default service CIDR.
+            # Verify on cluster with: kubectl cluster-info dump | grep -E 'cluster-cidr|service-cluster-ip-range'
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "10.42.0.0/16,10.43.0.0/16"
+            - name: FIREWALL_INPUT_PORTS
+              value: "8080"
+            - name: HEALTH_VPN_DURATION_INITIAL
+              value: "30s"
+          ports:
+            - containerPort: 8080
+              name: qbit-web
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "192Mi"
+              cpu: "200m"
+          livenessProbe:
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
+
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:5.0.4
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Brussels"
+            - name: WEBUI_PORT
+              value: "8080"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: qbittorrent-config
+        - name: downloads
+          hostPath:
+            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/MEDIA/downloads
+            type: DirectoryOrCreate

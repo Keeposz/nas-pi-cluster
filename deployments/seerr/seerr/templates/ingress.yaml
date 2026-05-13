@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seerr
+  namespace: media
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: seerr.home.keeposz.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # The upstream seerr-chart names the service after the release; releaseName is "seerr"
+                # so the Service is "seerr-seerr-chart" by default. Override here if the chart's
+                # fullname template differs after first sync — `kubectl get svc -n media` will show it.
+                name: seerr-seerr-chart
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - seerr.home.keeposz.dev
+      secretName: seerr-tls

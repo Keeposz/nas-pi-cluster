@@ -2,3 +2,7 @@ secrets/
 *.swp
 *.swo
 .DS_Store
+
+# Helm chart dependencies (Argo CD pulls these at sync time)
+deployments/*/*/charts/
+deployments/*/*/Chart.lock

@@ -1,0 +1,43 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seerr
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/seerr/seerr
+    targetRevision: HEAD
+    helm:
+      releaseName: seerr
+      skipTests: true
+      valuesObject:
+        seerr-chart:
+          persistence:
+            size: 5Gi
+            accessModes:
+              - ReadWriteOnce
+          service:
+            type: ClusterIP
+            port: 80
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+          ingress:
+            enabled: false
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
