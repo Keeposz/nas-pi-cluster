@@ -34,6 +34,8 @@ spec:
                   key: WIREGUARD_PRIVATE_KEY
             - name: SERVER_COUNTRIES
               value: "Netherlands"
+            - name: SERVER_CATEGORIES
+              value: "P2P"
             - name: TZ
               value: "Europe/Brussels"
             # Allow cluster traffic to reach qBittorrent WebUI through Gluetun's firewall.
