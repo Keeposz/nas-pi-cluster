@@ -10,8 +10,8 @@ spec:
   provider:
     name: github
   image: renovate/renovate:43.104.1
-  # Every Monday at 05:00 UTC
-  schedule: "0 5 * * 1"
+  # Sunday 02:00 UTC = 04:00 Europe/Brussels (summer) / 03:00 (winter)
+  schedule: "0 2 * * 0"
   parallelism: 1
   secretRef: renovate-secret
   extraEnv:

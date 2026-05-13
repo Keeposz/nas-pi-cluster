@@ -148,7 +148,7 @@ Commit + push — the root Application picks it up on the next refresh.
 
 ## Update flow (Renovate Operator + Telegram)
 
-Renovate runs **in-cluster** via the [mogenius/renovate-operator](https://github.com/mogenius/renovate-operator). The `RenovateJob` CR at [deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml](deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml) schedules a Renovate job on the cluster every Monday 05:00 UTC, which scans `Keeposz/nas-pi-cluster` for:
+Renovate runs **in-cluster** via the [mogenius/renovate-operator](https://github.com/mogenius/renovate-operator). The `RenovateJob` CR at [deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml](deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml) schedules a Renovate job on the cluster every Sunday 02:00 UTC (~04:00 Europe/Brussels), which scans `Keeposz/nas-pi-cluster` for:
 - Helm chart dependencies pinned in `Chart.yaml`
 - Container image tags in `templates/*.yaml` (skips `:latest`)
 - GitHub Actions in `.github/workflows/*.yml`
