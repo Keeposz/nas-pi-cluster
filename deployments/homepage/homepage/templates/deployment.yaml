@@ -39,6 +39,10 @@ spec:
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
               value: "homepage.home.keeposz.dev"
+          envFrom:
+            - secretRef:
+                name: homepage-secrets
+                optional: true
           resources:
             requests:
               memory: "128Mi"

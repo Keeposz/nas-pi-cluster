@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Glances system monitor
+name: glances
+version: "1.0"

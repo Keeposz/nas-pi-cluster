@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glances
+  namespace: glances
+spec:
+  type: ClusterIP
+  selector:
+    app: glances
+  ports:
+    - port: 61208
+      targetPort: http
+      protocol: TCP
+      name: http

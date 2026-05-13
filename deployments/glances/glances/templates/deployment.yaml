@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glances
+  namespace: glances
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glances
+  template:
+    metadata:
+      labels:
+        app: glances
+    spec:
+      hostPID: true
+      containers:
+        - name: glances
+          image: nicolargo/glances:latest-full
+          args: ["-w", "-q"]
+          ports:
+            - containerPort: 61208
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/Brussels"
+            - name: GLANCES_OPT
+              value: "-t 5"
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "20m"
+            limits:
+              memory: "192Mi"
+              cpu: "200m"
+          readinessProbe:
+            httpGet:
+              path: /api/4/status
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /api/4/status
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+              readOnly: true
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+      volumes:
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: sys
+          hostPath:
+            path: /sys

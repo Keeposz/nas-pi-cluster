@@ -30,6 +30,10 @@ data:
             description: Media server
             icon: plex.svg
             siteMonitor: https://plex.home.keeposz.dev
+            widget:
+              type: plex
+              url: https://plex.home.keeposz.dev
+              key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
@@ -42,6 +46,11 @@ data:
             description: GitOps deployments
             icon: argo-cd.svg
             siteMonitor: https://argocd.home.keeposz.dev
+            widget:
+              type: argocd
+              url: https://argocd.home.keeposz.dev
+              username: {{`{{HOMEPAGE_VAR_ARGOCD_USER}}`}}
+              password: {{`{{HOMEPAGE_VAR_ARGOCD_PASSWORD}}`}}
         - Renovate:
             href: https://renovate.home.keeposz.dev
             description: Dependency updates
@@ -54,11 +63,19 @@ data:
             description: Dashboards
             icon: grafana.svg
             siteMonitor: https://grafana.home.keeposz.dev
+            widget:
+              type: grafana
+              url: https://grafana.home.keeposz.dev
+              username: {{`{{HOMEPAGE_VAR_GRAFANA_USER}}`}}
+              password: {{`{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}`}}
         - Prometheus:
             href: https://prometheus.home.keeposz.dev
             description: Metrics
             icon: prometheus.svg
             siteMonitor: https://prometheus.home.keeposz.dev
+            widget:
+              type: prometheus
+              url: https://prometheus.home.keeposz.dev
 
   widgets.yaml: |
     - resources:
@@ -78,6 +95,24 @@ data:
           cpu: true
           memory: true
           showLabel: true
+    - openmeteo:
+        label: Gent
+        latitude: 51.054
+        longitude: 3.717
+        timezone: Europe/Brussels
+        units: metric
+        cache: 5
+    - glances:
+        url: http://glances.glances:61208
+        version: 4
+        cpu: true
+        mem: true
+        cputemp: true
+        uptime: true
+        disk: /
+        diskio: true
+        network: eth0
+        expanded: true
     - search:
         provider: duckduckgo
         target: _blank
