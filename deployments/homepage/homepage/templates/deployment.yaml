@@ -15,35 +15,39 @@ spec:
         app: homepage
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.27-alpine
+        - name: homer
+          image: b4bz/homer:latest
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
+          env:
+            - name: INIT_ASSETS
+              value: "1"
           resources:
             requests:
-              memory: "16Mi"
+              memory: "32Mi"
               cpu: "10m"
             limits:
-              memory: "64Mi"
-              cpu: "100m"
+              memory: "128Mi"
+              cpu: "200m"
           readinessProbe:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 2
+            initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 10
+            initialDelaySeconds: 15
             periodSeconds: 30
           volumeMounts:
-            - name: content
-              mountPath: /usr/share/nginx/html
+            - name: config
+              mountPath: /www/assets/config.yml
+              subPath: config.yml
               readOnly: true
       volumes:
-        - name: content
+        - name: config
           configMap:
             name: homepage-content
