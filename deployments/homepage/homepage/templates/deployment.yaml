@@ -37,12 +37,18 @@ spec:
             httpGet:
               path: /
               port: http
+              httpHeaders:
+                - name: Host
+                  value: homepage.home.keeposz.dev
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
               port: http
+              httpHeaders:
+                - name: Host
+                  value: homepage.home.keeposz.dev
             initialDelaySeconds: 30
             periodSeconds: 30
           volumeMounts:
