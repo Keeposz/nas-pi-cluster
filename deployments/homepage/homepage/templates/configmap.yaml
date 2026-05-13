@@ -13,18 +13,13 @@ data:
     headerStyle: clean
     hideVersion: true
     layout:
-      Apps:
+      Services:
         style: row
-        columns: 2
-      Infra:
-        style: row
-        columns: 2
-      Observability:
-        style: row
-        columns: 2
+        columns: 3
+        header: false
 
   services.yaml: |
-    - Apps:
+    - Services:
         - Plex:
             href: https://plex.home.keeposz.dev
             description: Media server
@@ -39,8 +34,6 @@ data:
             description: Recept app
             icon: mdi-silverware-fork-knife
             siteMonitor: https://recepten.home.keeposz.dev
-
-    - Infra:
         - ArgoCD:
             href: https://argocd.home.keeposz.dev
             description: GitOps deployments
@@ -55,8 +48,6 @@ data:
             description: Dependency updates
             icon: renovate.svg
             siteMonitor: https://renovate.home.keeposz.dev
-
-    - Observability:
         - Grafana:
             href: https://grafana.home.keeposz.dev
             description: Dashboards
