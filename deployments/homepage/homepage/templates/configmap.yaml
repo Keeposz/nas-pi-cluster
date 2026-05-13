@@ -49,8 +49,7 @@ data:
             widget:
               type: argocd
               url: https://argocd.home.keeposz.dev
-              username: {{`{{HOMEPAGE_VAR_ARGOCD_USER}}`}}
-              password: {{`{{HOMEPAGE_VAR_ARGOCD_PASSWORD}}`}}
+              key: {{`{{HOMEPAGE_VAR_ARGOCD_TOKEN}}`}}
         - Renovate:
             href: https://renovate.home.keeposz.dev
             description: Dependency updates

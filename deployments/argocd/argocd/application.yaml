@@ -19,6 +19,11 @@ spec:
           configs:
             params:
               server.insecure: true
+            cm:
+              accounts.homepage: apiKey
+            rbac:
+              policy.csv: |
+                g, homepage, role:readonly
           server:
             resources:
               requests:
