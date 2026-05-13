@@ -15,7 +15,7 @@ data:
     layout:
       Services:
         style: row
-        columns: 3
+        columns: 2
         header: false
 
   services.yaml: |
@@ -25,10 +25,6 @@ data:
             description: Media server
             icon: plex.svg
             siteMonitor: https://plex.home.keeposz.dev
-            widget:
-              type: plex
-              url: https://plex.home.keeposz.dev
-              key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
@@ -39,10 +35,6 @@ data:
             description: GitOps deployments
             icon: argo-cd.svg
             siteMonitor: https://argocd.home.keeposz.dev
-            widget:
-              type: argocd
-              url: https://argocd.home.keeposz.dev
-              key: {{`{{HOMEPAGE_VAR_ARGOCD_TOKEN}}`}}
         - Renovate:
             href: https://renovate.home.keeposz.dev
             description: Dependency updates
