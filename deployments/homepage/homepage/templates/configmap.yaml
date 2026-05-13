@@ -25,6 +25,31 @@ data:
             description: Media server
             icon: plex.svg
             siteMonitor: https://plex.home.keeposz.dev
+        - Seerr:
+            href: https://seerr.home.keeposz.dev
+            description: Request films & series
+            icon: jellyseerr.svg
+            siteMonitor: https://seerr.home.keeposz.dev
+        - Radarr:
+            href: https://radarr.home.keeposz.dev
+            description: Movie manager
+            icon: radarr.svg
+            siteMonitor: https://radarr.home.keeposz.dev
+        - Sonarr:
+            href: https://sonarr.home.keeposz.dev
+            description: TV series manager
+            icon: sonarr.svg
+            siteMonitor: https://sonarr.home.keeposz.dev
+        - Prowlarr:
+            href: https://prowlarr.home.keeposz.dev
+            description: Indexer manager
+            icon: prowlarr.svg
+            siteMonitor: https://prowlarr.home.keeposz.dev
+        - qBittorrent:
+            href: https://qbittorrent.home.keeposz.dev
+            description: Torrent client (via NordVPN)
+            icon: qbittorrent.svg
+            siteMonitor: https://qbittorrent.home.keeposz.dev
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
