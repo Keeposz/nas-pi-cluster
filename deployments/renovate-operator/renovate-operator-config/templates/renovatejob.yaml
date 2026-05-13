@@ -1,0 +1,23 @@
+---
+apiVersion: renovate-operator.mogenius.com/v1alpha1
+kind: RenovateJob
+metadata:
+  name: nas-pi-cluster
+  namespace: renovate-operator
+spec:
+  discoveryFilters:
+    - Keeposz/nas-pi-cluster
+  provider:
+    name: github
+  image: renovate/renovate:43.104.1
+  # Every Monday at 05:00 UTC
+  schedule: "0 5 * * 1"
+  parallelism: 1
+  secretRef: renovate-secret
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"

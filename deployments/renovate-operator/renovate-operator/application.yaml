@@ -1,0 +1,49 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: renovate-operator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/renovate-operator/renovate-operator
+    targetRevision: HEAD
+    helm:
+      releaseName: renovate-operator
+      valuesObject:
+        renovate-operator:
+          crd:
+            install: true
+            mode: template
+          replicaCount: 1
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "192Mi"
+          logging:
+            level: "info"
+            format: "json"
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            host: renovate.home.keeposz.dev
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            tls:
+              - hosts:
+                  - renovate.home.keeposz.dev
+                secretName: renovate-tls
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: renovate-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -12,6 +12,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **cert-manager** | TLS certificates via Let's Encrypt + Cloudflare DNS-01 |
 | **Sealed Secrets** | Encrypted secrets safe to commit to Git |
 | **Prometheus + Grafana** | Monitoring and dashboards |
+| **Renovate Operator** | In-cluster dependency updates with CRD-based scheduling + UI |
 | **Tailscale subnet router** | VPN access to cluster services |
 | **Plex** | Media server |
 | **Recepten** | Custom recipe app |
@@ -100,6 +101,7 @@ echo -n "my-secret-value" | kubectl create secret generic my-secret \
 Apps that need this:
 - `deployments/cert-manager/cert-manager-config/templates/cert-manager-sealed-secret.yaml` — Cloudflare API token
 - `deployments/observability/grafana/grafana-sealed-secret.yaml` — Grafana admin password
+- `deployments/renovate-operator/renovate-operator-config/templates/renovate-sealed-secret.yaml` — GitHub PAT for Renovate (see [Update flow](#update-flow-renovate-operator--telegram))
 - `deployments/tailscale/subnet-router/templates/tailscale-sealed-secret.yaml` — Tailscale auth key
 
 ## Adding a new app
@@ -144,20 +146,21 @@ spec:
 
 Commit + push — the root Application picks it up on the next refresh.
 
-## Update flow (Renovate + Telegram)
+## Update flow (Renovate Operator + Telegram)
 
-Renovate scans weekly (Monday 05:00 UTC) via GitHub Actions and detects new versions for:
+Renovate runs **in-cluster** via the [mogenius/renovate-operator](https://github.com/mogenius/renovate-operator). The `RenovateJob` CR at [deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml](deployments/renovate-operator/renovate-operator-config/templates/renovatejob.yaml) schedules a Renovate job on the cluster every Monday 05:00 UTC, which scans `Keeposz/nas-pi-cluster` for:
 - Helm chart dependencies pinned in `Chart.yaml`
 - Container image tags in `templates/*.yaml` (skips `:latest`)
 - GitHub Actions in `.github/workflows/*.yml`
 
-Available updates appear in the **Dependency Dashboard** issue. Tick a checkbox to create a PR immediately, or wait for the schedule. Merge the PR → ArgoCD deploys.
+Renovate config still lives in [renovate.json](renovate.json) — Renovate clones the repo and picks it up natively. Available updates appear in the **Dependency Dashboard** issue. Tick a checkbox to create a PR immediately, or wait for the schedule. Merge the PR → ArgoCD deploys.
+
+The operator's UI is served at `renovate.home.keeposz.dev` (Traefik ingress, Let's Encrypt cert). On-demand scans / log inspection happen there.
 
 Telegram notifications fire on:
 - 🔀 PR opened / closed / merged
 - 📋 Issue opened (e.g. Dependency Dashboard creation)
-- 🤖 Renovate scan completion (heartbeat)
-- 🔥 Workflow failure
+- 🔥 GitHub workflow failure
 
 ### Required GitHub secrets
 
@@ -165,9 +168,25 @@ Telegram notifications fire on:
 |--------|--------|
 | `TELEGRAM_BOT_TOKEN` | [@BotFather](https://t.me/botfather) → `/newbot` |
 | `TELEGRAM_CHAT_ID` | [@userinfobot](https://t.me/userinfobot) → `/start` |
-| `RENOVATE_TOKEN` | [Fine-grained PAT](https://github.com/settings/personal-access-tokens/new) with `contents`, `issues`, `pull-requests`, `workflows` (read+write) |
 
 Add via **Settings → Secrets and variables → Actions**.
+
+### Renovate GitHub PAT
+
+The Renovate Operator needs a Fine-grained PAT to clone the repo and open PRs. Create one at [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new) scoped to `nas-pi-cluster` with these repository permissions (read+write where applicable): `Contents`, `Pull requests`, `Issues`, `Workflows`, `Metadata` (read-only). Then seal it for the cluster:
+
+```bash
+kubectl create secret generic renovate-secret \
+  --namespace renovate-operator \
+  --from-literal=GITHUB_COM_USER=<your-github-username> \
+  --from-literal=GITHUB_COM_TOKEN='ghp_xxx' \
+  --from-literal=RENOVATE_TOKEN='ghp_xxx' \
+  --dry-run=client -o yaml \
+| kubeseal -o yaml \
+> deployments/renovate-operator/renovate-operator-config/templates/renovate-sealed-secret.yaml
+```
+
+Commit + push — ArgoCD applies it, the sealed-secrets controller decrypts it into a `Secret`, and the next Renovate run picks it up.
 
 ## Repository layout
 
@@ -184,9 +203,8 @@ Add via **Settings → Secrets and variables → Actions**.
 │   └── application.yaml      # Root app-of-apps
 ├── renovate.json             # Renovate config
 └── .github/workflows/
-    ├── renovate.yml          # Weekly Renovate scan
     ├── telegram-notify.yml   # PR/issue events → Telegram
-    └── workflow-status.yml   # Workflow completion → Telegram
+    └── workflow-status.yml   # Workflow failure → Telegram
 ```
 
 ## Useful commands
