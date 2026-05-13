@@ -14,10 +14,13 @@ spec:
   schedule: "0 5 * * 1"
   parallelism: 1
   secretRef: renovate-secret
+  extraEnv:
+    - name: NODE_OPTIONS
+      value: "--max-old-space-size=896"
   resources:
     requests:
-      memory: "128Mi"
+      memory: "256Mi"
       cpu: "100m"
     limits:
-      memory: "512Mi"
+      memory: "1280Mi"
       cpu: "500m"
