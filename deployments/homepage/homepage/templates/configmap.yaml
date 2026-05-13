@@ -5,76 +5,96 @@ metadata:
   name: homepage-content
   namespace: homepage
 data:
-  config.yml: |
-    title: "Homelab"
-    subtitle: "Keeposz"
-    documentTitle: "Homelab"
-    icon: "fas fa-home"
-    header: true
-    footer: '<p>nas-pi-cluster · K3s op Raspberry Pi</p>'
-    columns: "auto"
-    connectivityCheck: true
-    defaults:
-      layout: columns
-      colorTheme: dark
-    theme: default
-    colors:
-      dark:
-        highlight-primary: "#7aa2f7"
-        highlight-secondary: "#1a1f2e"
-        highlight-hover: "#283042"
-        background: "#0a0d14"
-        card-background: "#171a21"
-        text: "#e6e8eb"
-        text-header: "#ffffff"
-        text-title: "#e6e8eb"
-        text-subtitle: "#8a93a6"
-        card-shadow: rgba(0, 0, 0, 0.3)
-        link: "#7aa2f7"
-        link-hover: "#9ec0ff"
-    services:
-      - name: "Apps"
-        icon: "fas fa-desktop"
-        items:
-          - name: "Plex"
-            subtitle: "Media server"
-            logo: "https://cdn.simpleicons.org/plex/EBAF00"
-            url: "https://plex.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
-          - name: "Recepten"
-            subtitle: "Recept app"
-            icon: "fas fa-utensils"
-            url: "https://recepten.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
-      - name: "Infra"
-        icon: "fas fa-cogs"
-        items:
-          - name: "ArgoCD"
-            subtitle: "GitOps deployments"
-            logo: "https://cdn.simpleicons.org/argo/EF7B4D"
-            url: "https://argocd.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
-          - name: "Renovate"
-            subtitle: "Dependency updates"
-            icon: "fas fa-sync"
-            url: "https://renovate.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
-      - name: "Observability"
-        icon: "fas fa-chart-line"
-        items:
-          - name: "Grafana"
-            subtitle: "Dashboards"
-            logo: "https://cdn.simpleicons.org/grafana/F46800"
-            url: "https://grafana.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
-          - name: "Prometheus"
-            subtitle: "Metrics"
-            logo: "https://cdn.simpleicons.org/prometheus/E6522C"
-            url: "https://prometheus.home.keeposz.dev"
-            target: "_blank"
-            type: "Ping"
+  settings.yaml: |
+    title: Homelab
+    favicon: https://cdn.simpleicons.org/raspberrypi/c51a4a
+    theme: dark
+    color: slate
+    headerStyle: clean
+    hideVersion: true
+    layout:
+      Apps:
+        style: row
+        columns: 2
+      Infra:
+        style: row
+        columns: 2
+      Observability:
+        style: row
+        columns: 2
+
+  services.yaml: |
+    - Apps:
+        - Plex:
+            href: https://plex.home.keeposz.dev
+            description: Media server
+            icon: plex.svg
+            siteMonitor: https://plex.home.keeposz.dev
+        - Recepten:
+            href: https://recepten.home.keeposz.dev
+            description: Recept app
+            icon: mdi-silverware-fork-knife
+            siteMonitor: https://recepten.home.keeposz.dev
+
+    - Infra:
+        - ArgoCD:
+            href: https://argocd.home.keeposz.dev
+            description: GitOps deployments
+            icon: argo-cd.svg
+            siteMonitor: https://argocd.home.keeposz.dev
+        - Renovate:
+            href: https://renovate.home.keeposz.dev
+            description: Dependency updates
+            icon: renovate.svg
+            siteMonitor: https://renovate.home.keeposz.dev
+
+    - Observability:
+        - Grafana:
+            href: https://grafana.home.keeposz.dev
+            description: Dashboards
+            icon: grafana.svg
+            siteMonitor: https://grafana.home.keeposz.dev
+        - Prometheus:
+            href: https://prometheus.home.keeposz.dev
+            description: Metrics
+            icon: prometheus.svg
+            siteMonitor: https://prometheus.home.keeposz.dev
+
+  widgets.yaml: |
+    - resources:
+        backend: kubernetes
+        expanded: true
+        cpu: true
+        memory: true
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "Cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          dateStyle: short
+          hourCycle: h23
+
+  bookmarks.yaml: |
+    - Developer:
+        - GitHub:
+            - abbr: GH
+              href: https://github.com/Keeposz
+
+  kubernetes.yaml: |
+    mode: cluster
+
+  docker.yaml: ""
