@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Homelab homepage — one-click launcher for all apps
+name: homepage
+version: "1.0"

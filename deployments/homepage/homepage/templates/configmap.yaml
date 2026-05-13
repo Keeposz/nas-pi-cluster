@@ -1,0 +1,143 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-content
+  namespace: homepage
+data:
+  index.html: |
+    <!doctype html>
+    <html lang="nl">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Homelab — Keeposz</title>
+      <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><text y=%2214%22 font-size=%2214%22>🏠</text></svg>" />
+      <style>
+        :root {
+          --text: #e6e8eb;
+          --muted: #8a93a6;
+          --accent: #7aa2f7;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+        body {
+          min-height: 100vh;
+          display: flex; flex-direction: column;
+          background:
+            radial-gradient(ellipse 80% 60% at 50% -10%, rgba(122, 162, 247, 0.18), transparent 60%),
+            radial-gradient(ellipse 60% 50% at 90% 90%, rgba(247, 122, 196, 0.10), transparent 60%),
+            radial-gradient(ellipse 60% 50% at 10% 80%, rgba(122, 247, 196, 0.08), transparent 60%),
+            #0a0d14;
+          background-attachment: fixed;
+        }
+        header { padding: 3rem 1.5rem 1.5rem; text-align: center; }
+        header h1 { margin: 0; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.02em; }
+        header p { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.95rem; }
+        main { flex: 1; padding: 1rem 1.5rem 3rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+        section h2 {
+          font-size: 0.78rem; font-weight: 600;
+          text-transform: uppercase; letter-spacing: 0.12em;
+          color: var(--muted); margin: 2rem 0 1rem;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        a.card {
+          position: relative;
+          display: flex; flex-direction: column; gap: 0.6rem;
+          padding: 1.25rem; border-radius: 14px;
+          background: rgba(255, 255, 255, 0.035);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          color: var(--text); text-decoration: none;
+          transition: background 0.18s, border-color 0.18s, transform 0.12s;
+          overflow: hidden;
+        }
+        a.card::before {
+          content: "";
+          position: absolute; inset: 0;
+          background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent 50%);
+          pointer-events: none;
+        }
+        a.card:hover {
+          background: rgba(255, 255, 255, 0.06);
+          border-color: rgba(122, 162, 247, 0.4);
+          transform: translateY(-2px);
+        }
+        a.card:active { transform: translateY(0); }
+        .logo {
+          width: 36px; height: 36px;
+          display: flex; align-items: center; justify-content: center;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 6px;
+        }
+        .logo img, .logo svg { width: 100%; height: 100%; display: block; }
+        .logo.emoji { font-size: 1.4rem; line-height: 1; padding: 0; }
+        .name { font-size: 1.05rem; font-weight: 600; }
+        .desc { font-size: 0.85rem; color: var(--muted); margin-top: -0.3rem; }
+        .url { font-size: 0.72rem; color: var(--accent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; opacity: 0.85; }
+        footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 0.78rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+      </style>
+    </head>
+    <body>
+      <header>
+        <h1>nas-pi-cluster</h1>
+        <p>One-click launcher voor alle services</p>
+      </header>
+      <main>
+        <section>
+          <h2>Apps</h2>
+          <div class="grid">
+            <a class="card" href="https://plex.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo"><img src="https://cdn.simpleicons.org/plex/EBAF00" alt="" loading="lazy" /></span>
+              <span class="name">Plex</span>
+              <span class="desc">Media server</span>
+              <span class="url">plex.home.keeposz.dev</span>
+            </a>
+            <a class="card" href="https://recepten.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#ff9f6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg></span>
+              <span class="name">Recepten</span>
+              <span class="desc">Recept app</span>
+              <span class="url">recepten.home.keeposz.dev</span>
+            </a>
+          </div>
+        </section>
+        <section>
+          <h2>Infra</h2>
+          <div class="grid">
+            <a class="card" href="https://argocd.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo"><img src="https://cdn.simpleicons.org/argo/EF7B4D" alt="" loading="lazy" /></span>
+              <span class="name">ArgoCD</span>
+              <span class="desc">GitOps deployments</span>
+              <span class="url">argocd.home.keeposz.dev</span>
+            </a>
+            <a class="card" href="https://renovate.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo emoji">🔄</span>
+              <span class="name">Renovate</span>
+              <span class="desc">Dependency updates</span>
+              <span class="url">renovate.home.keeposz.dev</span>
+            </a>
+          </div>
+        </section>
+        <section>
+          <h2>Observability</h2>
+          <div class="grid">
+            <a class="card" href="https://grafana.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo"><img src="https://cdn.simpleicons.org/grafana/F46800" alt="" loading="lazy" /></span>
+              <span class="name">Grafana</span>
+              <span class="desc">Dashboards</span>
+              <span class="url">grafana.home.keeposz.dev</span>
+            </a>
+            <a class="card" href="https://prometheus.home.keeposz.dev" target="_blank" rel="noopener">
+              <span class="logo"><img src="https://cdn.simpleicons.org/prometheus/E6522C" alt="" loading="lazy" /></span>
+              <span class="name">Prometheus</span>
+              <span class="desc">Metrics</span>
+              <span class="url">prometheus.home.keeposz.dev</span>
+            </a>
+          </div>
+        </section>
+      </main>
+      <footer>nas-pi-cluster · K3s op Raspberry Pi</footer>
+    </body>
+    </html>
