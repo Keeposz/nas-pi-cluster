@@ -96,5 +96,3 @@ data:
 
   kubernetes.yaml: |
     mode: cluster
-
-  docker.yaml: ""
