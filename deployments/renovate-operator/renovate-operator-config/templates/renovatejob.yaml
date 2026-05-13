@@ -17,6 +17,8 @@ spec:
   extraEnv:
     - name: NODE_OPTIONS
       value: "--max-old-space-size=896"
+    - name: RENOVATE_GIT_AUTHOR
+      value: "Keeposz <205087396+Keeposz@users.noreply.github.com>"
   resources:
     requests:
       memory: "256Mi"
