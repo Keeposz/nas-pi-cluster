@@ -25,31 +25,65 @@ data:
             description: Media server
             icon: plex.svg
             siteMonitor: https://plex.home.keeposz.dev
+            widget:
+              type: plex
+              url: http://plex.plex.svc.cluster.local:32400
+              key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
         - Seerr:
             href: https://seerr.home.keeposz.dev
             description: Request films & series
             icon: jellyseerr.svg
             siteMonitor: https://seerr.home.keeposz.dev
+            widget:
+              type: jellyseerr
+              url: http://seerr-seerr-chart.media.svc.cluster.local:5055
+              key: {{`{{HOMEPAGE_VAR_SEERR_KEY}}`}}
         - Radarr:
             href: https://radarr.home.keeposz.dev
             description: Movie manager
             icon: radarr.svg
             siteMonitor: https://radarr.home.keeposz.dev
+            widget:
+              type: radarr
+              url: http://radarr.media.svc.cluster.local:7878
+              key: {{`{{HOMEPAGE_VAR_RADARR_KEY}}`}}
         - Sonarr:
             href: https://sonarr.home.keeposz.dev
             description: TV series manager
             icon: sonarr.svg
             siteMonitor: https://sonarr.home.keeposz.dev
+            widget:
+              type: sonarr
+              url: http://sonarr.media.svc.cluster.local:8989
+              key: {{`{{HOMEPAGE_VAR_SONARR_KEY}}`}}
+        - Bazarr:
+            href: https://bazarr.home.keeposz.dev
+            description: Subtitle manager
+            icon: bazarr.svg
+            siteMonitor: https://bazarr.home.keeposz.dev
+            widget:
+              type: bazarr
+              url: http://bazarr.media.svc.cluster.local:6767
+              key: {{`{{HOMEPAGE_VAR_BAZARR_KEY}}`}}
         - Prowlarr:
             href: https://prowlarr.home.keeposz.dev
             description: Indexer manager
             icon: prowlarr.svg
             siteMonitor: https://prowlarr.home.keeposz.dev
+            widget:
+              type: prowlarr
+              url: http://prowlarr.media.svc.cluster.local:9696
+              key: {{`{{HOMEPAGE_VAR_PROWLARR_KEY}}`}}
         - qBittorrent:
             href: https://qbittorrent.home.keeposz.dev
             description: Torrent client (via NordVPN)
             icon: qbittorrent.svg
             siteMonitor: https://qbittorrent.home.keeposz.dev
+            widget:
+              type: qbittorrent
+              url: http://qbittorrent.media.svc.cluster.local:8080
+              username: {{`{{HOMEPAGE_VAR_QBIT_USER}}`}}
+              password: {{`{{HOMEPAGE_VAR_QBIT_PASS}}`}}
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
