@@ -43,19 +43,20 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "100m"
-          # Detect daemon crashes / hangs. Doesn't catch wireguard handshake
-          # loops (rare, but still requires manual restart) since tailscaled
-          # stays "alive" in that state. For that we'd need a netcheck-based
-          # probe — heavier, deferred.
+          # netcheck does a real connectivity test (DERP relays, UDP, etc.) —
+          # catches the wireguard handshake-loop state that "tailscale status"
+          # misses (daemon stays alive but tunnel is dead). Runs every 2 min,
+          # 3 consecutive failures triggers restart (~6 min recovery time).
           livenessProbe:
             exec:
               command:
-                - tailscale
-                - status
-            initialDelaySeconds: 60
-            periodSeconds: 60
-            timeoutSeconds: 10
-            failureThreshold: 5
+                - /bin/sh
+                - -c
+                - tailscale netcheck 2>&1 | grep -q "DERP latency"
+            initialDelaySeconds: 90
+            periodSeconds: 120
+            timeoutSeconds: 30
+            failureThreshold: 3
           startupProbe:
             exec:
               command:
