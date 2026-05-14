@@ -23,8 +23,13 @@ spec:
           env:
             - name: PUID
               value: "1000"
+            # PGID 100 matches host group "users" — required for the
+            # linuxserver/plex container to delete media via the Plex UI on
+            # OMV-style hostpaths where files are owned by jonas:users.
+            # PGID 1000 caused "There was a problem deleting this item" even
+            # though UID matched (linuxserver/docker-plex#213).
             - name: PGID
-              value: "1000"
+              value: "100"
             - name: TZ
               value: "Europe/Brussels"
             - name: VERSION
