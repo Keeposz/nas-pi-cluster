@@ -31,7 +31,7 @@ spec:
               value: "Europe/Brussels"
           resources:
             requests:
-              memory: "256Mi"
+              memory: "192Mi"   # was 256 — observed ~186Mi
               cpu: "100m"
             limits:
               memory: "768Mi"

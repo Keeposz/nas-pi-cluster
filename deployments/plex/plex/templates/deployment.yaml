@@ -36,7 +36,7 @@ spec:
               value: "docker"
           resources:
             requests:
-              memory: "512Mi"
+              memory: "384Mi"   # was 512 — idle ~170Mi, transcoding spikes; keep headroom in limit
               cpu: "500m"
             limits:
               memory: "1536Mi"
