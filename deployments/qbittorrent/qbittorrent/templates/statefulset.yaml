@@ -15,9 +15,14 @@ spec:
       labels:
         app: qbittorrent
     spec:
-      containers:
+      # Gluetun runs as a native sidecar (Kubernetes 1.29+): it starts before
+      # qbittorrent and qbittorrent's start is gated on gluetun's startupProbe
+      # passing. This eliminates the race where qbittorrent boots before the
+      # VPN tunnel + DNS are ready, which left DHT/trackers permanently broken.
+      initContainers:
         - name: gluetun
           image: qmcgaw/gluetun:v3.40.0
+          restartPolicy: Always
           securityContext:
             capabilities:
               add:
@@ -49,8 +54,19 @@ spec:
               value: "on"
             - name: HTTPPROXY_LISTENING_ADDRESS
               value: ":8888"
+            # Plain DNS (no DoT) — DoT to Cloudflare intermittently times out
+            # during the VPN handshake window and triggered restart loops.
+            - name: DOT
+              value: "off"
+            # Skip block-list download at boot — it ran DNS lookups before the
+            # tunnel was fully stable and added ~50s to startup.
+            - name: BLOCK_MALICIOUS
+              value: "off"
+            # IP-based health target so the healthcheck doesn't depend on DNS.
+            - name: HEALTH_TARGET_ADDRESS
+              value: "1.1.1.1:443"
             - name: HEALTH_VPN_DURATION_INITIAL
-              value: "30s"
+              value: "60s"
           ports:
             - containerPort: 8080
               name: qbit-web
@@ -63,15 +79,24 @@ spec:
             limits:
               memory: "192Mi"
               cpu: "200m"
+          # Gates qbittorrent's start: gluetun is "Ready" only once its own
+          # healthcheck on 127.0.0.1:9999 returns 200, i.e. VPN tunnel up.
+          startupProbe:
+            httpGet:
+              host: 127.0.0.1
+              port: 9999
+              path: /
+            periodSeconds: 2
+            failureThreshold: 60   # up to 120s for the tunnel to come up
           livenessProbe:
-            exec:
-              command:
-                - /gluetun-entrypoint
-                - healthcheck
-            initialDelaySeconds: 60
+            httpGet:
+              host: 127.0.0.1
+              port: 9999
+              path: /
             periodSeconds: 30
             failureThreshold: 3
 
+      containers:
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:5.0.4
           env:
