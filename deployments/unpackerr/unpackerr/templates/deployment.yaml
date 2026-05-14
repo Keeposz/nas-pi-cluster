@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unpackerr
+  namespace: media
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: unpackerr
+  template:
+    metadata:
+      labels:
+        app: unpackerr
+    spec:
+      containers:
+        - name: unpackerr
+          image: golift/unpackerr:0.14.6
+          env:
+            - name: TZ
+              value: "Europe/Brussels"
+            - name: UN_LOG_FILE_MB
+              value: "10"
+            - name: UN_LOG_FILES
+              value: "3"
+            # Sonarr instance
+            - name: UN_SONARR_0_URL
+              value: "http://sonarr.media.svc.cluster.local:8989"
+            - name: UN_SONARR_0_PATHS_0
+              value: "/downloads"
+            - name: UN_SONARR_0_PROTOCOLS
+              value: "torrent"
+            - name: UN_SONARR_0_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: unpackerr-secrets
+                  key: SONARR_API_KEY
+            # Radarr instance
+            - name: UN_RADARR_0_URL
+              value: "http://radarr.media.svc.cluster.local:7878"
+            - name: UN_RADARR_0_PATHS_0
+              value: "/downloads"
+            - name: UN_RADARR_0_PROTOCOLS
+              value: "torrent"
+            - name: UN_RADARR_0_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: unpackerr-secrets
+                  key: RADARR_API_KEY
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "25m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: downloads
+              mountPath: /downloads
+      volumes:
+        - name: downloads
+          hostPath:
+            path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/MEDIA/downloads
+            type: DirectoryOrCreate

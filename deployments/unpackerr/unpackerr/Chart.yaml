@@ -1,0 +1,6 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Unpackerr auto-extracts RAR archives for Sonarr/Radarr
+name: unpackerr
+version: "1.0"
