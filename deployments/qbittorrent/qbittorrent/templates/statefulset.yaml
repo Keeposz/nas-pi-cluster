@@ -80,19 +80,23 @@ spec:
               memory: "192Mi"
               cpu: "200m"
           # Gates qbittorrent's start: gluetun is "Ready" only once its own
-          # healthcheck on 127.0.0.1:9999 returns 200, i.e. VPN tunnel up.
+          # /gluetun-entrypoint healthcheck command exits 0 (VPN tunnel up).
+          # Must be exec (not httpGet) because gluetun binds its health
+          # server to 127.0.0.1 only — kubelet probes from the host, where
+          # 127.0.0.1 is *not* the pod's loopback, so a TCP/HTTP probe
+          # against 127.0.0.1:9999 always returns connection refused.
           startupProbe:
-            httpGet:
-              host: 127.0.0.1
-              port: 9999
-              path: /
-            periodSeconds: 2
-            failureThreshold: 60   # up to 120s for the tunnel to come up
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+            periodSeconds: 3
+            failureThreshold: 40   # up to 120s for the tunnel to come up
           livenessProbe:
-            httpGet:
-              host: 127.0.0.1
-              port: 9999
-              path: /
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
             periodSeconds: 30
             failureThreshold: 3
 
