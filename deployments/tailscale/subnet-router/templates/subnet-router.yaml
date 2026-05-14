@@ -43,3 +43,25 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "100m"
+          # Detect daemon crashes / hangs. Doesn't catch wireguard handshake
+          # loops (rare, but still requires manual restart) since tailscaled
+          # stays "alive" in that state. For that we'd need a netcheck-based
+          # probe — heavier, deferred.
+          livenessProbe:
+            exec:
+              command:
+                - tailscale
+                - status
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 5
+          startupProbe:
+            exec:
+              command:
+                - tailscale
+                - status
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 24    # up to 2 min for first connection
