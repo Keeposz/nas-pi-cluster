@@ -15,6 +15,16 @@ spec:
       labels:
         app: qbittorrent
     spec:
+      # Route DNS through gluetun's own resolver (127.0.0.1:53, reachable
+      # because all containers share the pod's network namespace). Without
+      # this, qbittorrent uses CoreDNS, which forwards to the node's upstream
+      # DNS (typically the ISP), so the ISP can see tracker hostnames being
+      # resolved even though the torrent traffic itself is tunneled.
+      # With this, DNS queries leave only via the VPN tunnel.
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 127.0.0.1
       # Gluetun runs as a native sidecar (Kubernetes 1.29+): it starts before
       # qbittorrent and qbittorrent's start is gated on gluetun's startupProbe
       # passing. This eliminates the race where qbittorrent boots before the
