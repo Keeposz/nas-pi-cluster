@@ -45,8 +45,8 @@ spec:
               cpu: "100m"
           # netcheck does a real connectivity test (DERP relays, UDP, etc.) —
           # catches the wireguard handshake-loop state that "tailscale status"
-          # misses (daemon stays alive but tunnel is dead). Runs every 2 min,
-          # 3 consecutive failures triggers restart (~6 min recovery time).
+          # misses (daemon stays alive but tunnel is dead). Runs every 60s,
+          # 2 consecutive failures triggers restart (~2 min recovery time).
           livenessProbe:
             exec:
               command:
@@ -54,9 +54,9 @@ spec:
                 - -c
                 - tailscale netcheck 2>&1 | grep -q "DERP latency"
             initialDelaySeconds: 90
-            periodSeconds: 120
-            timeoutSeconds: 30
-            failureThreshold: 3
+            periodSeconds: 60
+            timeoutSeconds: 20
+            failureThreshold: 2
           startupProbe:
             exec:
               command:
