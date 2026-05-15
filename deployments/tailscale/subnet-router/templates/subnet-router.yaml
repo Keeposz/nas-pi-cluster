@@ -43,20 +43,23 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "100m"
-          # netcheck does a real connectivity test (DERP relays, UDP, etc.) —
-          # catches the wireguard handshake-loop state that "tailscale status"
-          # misses (daemon stays alive but tunnel is dead). Runs every 60s,
-          # 2 consecutive failures triggers restart (~2 min recovery time).
+          # Lightweight liveness: only checks if the tailscale daemon socket is
+          # responsive (i.e. the process itself is healthy). NOT a network/DERP
+          # connectivity test — the old netcheck probe was network-dependent
+          # and killed the pod on transient DERP-relay slowness, causing more
+          # outages than it fixed. Tailscale has its own internal reconnect
+          # logic for tunnel/peer issues, so let it handle network blips
+          # without a kubelet restart breaking established connections.
           livenessProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                - tailscale netcheck 2>&1 | grep -q "DERP latency"
-            initialDelaySeconds: 90
+                - tailscale status --json --peers=false >/dev/null 2>&1
+            initialDelaySeconds: 120
             periodSeconds: 60
-            timeoutSeconds: 20
-            failureThreshold: 2
+            timeoutSeconds: 10
+            failureThreshold: 5
           startupProbe:
             exec:
               command:
