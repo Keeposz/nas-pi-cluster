@@ -44,6 +44,14 @@ spec:
                   editable: true
                   options:
                     path: /var/lib/grafana/dashboards/default
+                - name: "sidecar"            # scan dashboards written by the
+                  orgId: 1                   # grafana-sc-dashboard sidecar
+                  folder: ""                 # (label grafana_dashboard=1)
+                  type: file
+                  disableDeletion: false
+                  editable: true
+                  options:
+                    path: /tmp/dashboards
           dashboards:
             default:
               k3s-cluster-monitoring:
