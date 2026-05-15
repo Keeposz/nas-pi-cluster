@@ -59,6 +59,7 @@ spec:
               apiVersion: 1
               datasources:
                 - name: Prometheus
+                  uid: prometheus        # pinned UID so custom dashboards can reference it
                   type: prometheus
                   url: http://prometheus-server.observability.svc.cluster.local
                   access: proxy
