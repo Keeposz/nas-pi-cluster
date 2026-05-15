@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/argocd/argocd
+    path: deployments/infra/argocd
     targetRevision: HEAD
     helm:
       releaseName: argocd

@@ -2,19 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager-config
+  name: glances
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/cert-manager/cert-manager-config
+    path: deployments/infra/glances
     targetRevision: HEAD
     helm:
-      releaseName: cert-manager-config
+      releaseName: glances
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: cert-manager
+    namespace: glances
   syncPolicy:
     automated:
       prune: true

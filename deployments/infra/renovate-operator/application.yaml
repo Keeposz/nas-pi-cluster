@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/renovate-operator/renovate-operator
+    path: deployments/infra/renovate-operator
     targetRevision: HEAD
     helm:
       releaseName: renovate-operator

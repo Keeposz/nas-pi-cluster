@@ -2,22 +2,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: homepage
+  name: traefik-config
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/homepage/homepage
+    path: deployments/infra/traefik-config
     targetRevision: HEAD
     helm:
-      releaseName: homepage
+      releaseName: traefik-config
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: homepage
+    namespace: kube-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+      - ServerSideApply=true

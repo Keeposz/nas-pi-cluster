@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/cert-manager/cert-manager
+    path: deployments/infra/cert-manager
     targetRevision: HEAD
     helm:
       releaseName: cert-manager

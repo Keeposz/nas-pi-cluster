@@ -2,28 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sealed-secrets
+  name: tailscale-subnet-router
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/sealed-secrets/sealed-secrets
+    path: deployments/infra/tailscale-subnet-router
     targetRevision: HEAD
     helm:
-      releaseName: sealed-secrets
-      valuesObject:
-        sealed-secrets:
-          resources:
-            requests:
-              memory: "32Mi"
-              cpu: "50m"
-            limits:
-              memory: "64Mi"
-              cpu: "100m"
+      releaseName: tailscale-subnet-router
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: sealed-secrets
+    namespace: tailscale
   syncPolicy:
     automated:
       prune: true
