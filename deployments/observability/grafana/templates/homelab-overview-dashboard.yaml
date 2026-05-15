@@ -27,7 +27,7 @@ data:
           "title": "NAS storage used",
           "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
           "id": 1,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "(node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}) / node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} * 100",
             "refId": "A"
@@ -54,7 +54,7 @@ data:
           "title": "Memory used (matches free -h)",
           "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
           "id": 2,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
             "refId": "A"
@@ -80,7 +80,7 @@ data:
           "title": "CPU usage",
           "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
           "id": 3,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
             "refId": "A"
@@ -106,7 +106,7 @@ data:
           "title": "NAS free space",
           "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8},
           "id": 4,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
             "refId": "A"
@@ -132,7 +132,7 @@ data:
           "title": "NAS used",
           "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8},
           "id": 5,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
             "refId": "A"
@@ -144,7 +144,7 @@ data:
           "title": "Memory used",
           "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8},
           "id": 6,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
             "refId": "A"
@@ -156,7 +156,7 @@ data:
           "title": "Memory available",
           "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8},
           "id": 7,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [{
             "expr": "node_memory_MemAvailable_bytes",
             "refId": "A"
@@ -182,7 +182,7 @@ data:
           "title": "NAS storage over time",
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
           "id": 8,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
@@ -202,7 +202,7 @@ data:
           "title": "Memory & CPU over time",
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
           "id": 9,
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": "Prometheus",
           "targets": [
             {
               "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
