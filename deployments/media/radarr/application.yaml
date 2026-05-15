@@ -2,19 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: plex
+  name: radarr
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/plex/plex
+    path: deployments/media/radarr
     targetRevision: HEAD
     helm:
-      releaseName: plex
+      releaseName: radarr
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: plex
+    namespace: media
   syncPolicy:
     automated:
       prune: true

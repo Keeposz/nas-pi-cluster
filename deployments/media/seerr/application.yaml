@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/seerr/seerr
+    path: deployments/media/seerr
     targetRevision: HEAD
     helm:
       releaseName: seerr

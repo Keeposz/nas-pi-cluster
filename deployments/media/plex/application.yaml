@@ -2,19 +2,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: qbittorrent
+  name: plex
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/qbittorrent/qbittorrent
+    path: deployments/media/plex
     targetRevision: HEAD
     helm:
-      releaseName: qbittorrent
+      releaseName: plex
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: media
+    namespace: plex
   syncPolicy:
     automated:
       prune: true

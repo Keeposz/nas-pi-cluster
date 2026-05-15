@@ -2,16 +2,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prowlarr
+  name: qbittorrent
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: git@github.com:Keeposz/nas-pi-cluster.git
-    path: deployments/prowlarr/prowlarr
+    path: deployments/media/qbittorrent
     targetRevision: HEAD
     helm:
-      releaseName: prowlarr
+      releaseName: qbittorrent
   destination:
     server: "https://kubernetes.default.svc"
     namespace: media
