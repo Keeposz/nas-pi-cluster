@@ -13,13 +13,17 @@ data:
     headerStyle: clean
     hideVersion: true
     layout:
-      Services:
+      Media:
         style: row
         columns: 2
         header: false
+      Tools:
+        style: row
+        columns: 4
+        header: false
 
   services.yaml: |
-    - Services:
+    - Media:
         - Plex:
             href: https://plex.home.keeposz.dev
             description: Media server
@@ -84,6 +88,15 @@ data:
               url: http://qbittorrent.media.svc.cluster.local:8080
               username: {{`{{HOMEPAGE_VAR_QBIT_USER}}`}}
               password: {{`{{HOMEPAGE_VAR_QBIT_PASS}}`}}
+        - Prometheus:
+            href: https://prometheus.home.keeposz.dev
+            description: Metrics
+            icon: prometheus.svg
+            siteMonitor: https://prometheus.home.keeposz.dev
+            widget:
+              type: prometheus
+              url: https://prometheus.home.keeposz.dev
+    - Tools:
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
@@ -104,19 +117,6 @@ data:
             description: Dashboards
             icon: grafana.svg
             siteMonitor: https://grafana.home.keeposz.dev
-            widget:
-              type: grafana
-              url: https://grafana.home.keeposz.dev
-              username: {{`{{HOMEPAGE_VAR_GRAFANA_USER}}`}}
-              password: {{`{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}`}}
-        - Prometheus:
-            href: https://prometheus.home.keeposz.dev
-            description: Metrics
-            icon: prometheus.svg
-            siteMonitor: https://prometheus.home.keeposz.dev
-            widget:
-              type: prometheus
-              url: https://prometheus.home.keeposz.dev
 
   widgets.yaml: |
     - resources:
