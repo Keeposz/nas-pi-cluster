@@ -17,6 +17,10 @@ data:
         style: row
         columns: 2
         header: false
+      Downloads:
+        style: row
+        columns: 1
+        header: false
       Tools:
         style: row
         columns: 4
@@ -78,6 +82,7 @@ data:
               type: prowlarr
               url: http://prowlarr.media.svc.cluster.local:9696
               key: {{`{{HOMEPAGE_VAR_PROWLARR_KEY}}`}}
+    - Downloads:
         - qBittorrent:
             href: https://qbittorrent.home.keeposz.dev
             description: Torrent client (via NordVPN)
