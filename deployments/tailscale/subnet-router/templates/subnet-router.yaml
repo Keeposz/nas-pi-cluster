@@ -15,6 +15,11 @@ spec:
         app: tailscale-subnet-router
     spec:
       serviceAccountName: tailscale-sa
+      # Mark as critical cluster infra so Tailscale isn't the first thing
+      # evicted when the node hits memory pressure (e.g. Plex transcoding
+      # spike, Prometheus scrape blip). Kubelet will preempt lower-priority
+      # pods first, keeping the tunnel up.
+      priorityClassName: system-cluster-critical
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
@@ -38,10 +43,10 @@ spec:
               value: "nas-pi-cluster"
           resources:
             requests:
-              memory: "32Mi"
+              memory: "64Mi"     # was 32Mi — observed up to ~50Mi steady state
               cpu: "25m"
             limits:
-              memory: "64Mi"
+              memory: "128Mi"    # was 64Mi — headroom for DERP switches / peer add bursts
               cpu: "100m"
           # Lightweight liveness: only checks if the tailscale daemon socket is
           # responsive (i.e. the process itself is healthy). NOT a network/DERP
