@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: glances
+  namespace: glances
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: glances.home.keeposz.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: glances
+                port:
+                  number: 61208
+  tls:
+    - hosts:
+        - glances.home.keeposz.dev
+      secretName: glances-tls
