@@ -1,0 +1,232 @@
+---
+# Focused dashboard for the homelab Pi: NAS disk free/used (for adding films),
+# memory matching `free -h`, and real CPU usage. The upstream community
+# dashboard (k3s-cluster-monitoring) sums *all* mountpoints (including each
+# folder2ram bind-mount), which inflates "Total" to ~36 TiB and shows memory
+# as Kubernetes-allocated rather than host-actual. This dashboard fixes both.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homelab-overview-dashboard
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  homelab-overview.json: |
+    {
+      "annotations": {"list": []},
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "id": null,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "type": "gauge",
+          "title": "NAS storage used",
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+          "id": 1,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "(node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}) / node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} * 100",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "red", "value": 90}
+                ]
+              }
+            }
+          },
+          "options": {"showThresholdLabels": false, "showThresholdMarkers": true}
+        },
+        {
+          "type": "gauge",
+          "title": "Memory used (matches free -h)",
+          "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+          "id": 2,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 75},
+                  {"color": "red", "value": 90}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "gauge",
+          "title": "CPU usage",
+          "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
+          "id": 3,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 60},
+                  {"color": "red", "value": 85}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "stat",
+          "title": "NAS free space",
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8},
+          "id": 4,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "yellow", "value": 107374182400},
+                  {"color": "green", "value": 536870912000}
+                ]
+              }
+            }
+          },
+          "options": {"colorMode": "value", "graphMode": "area", "textMode": "auto"}
+        },
+        {
+          "type": "stat",
+          "title": "NAS used",
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8},
+          "id": 5,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "bytes"}}
+        },
+        {
+          "type": "stat",
+          "title": "Memory used",
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8},
+          "id": 6,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+            "refId": "A"
+          }],
+          "fieldConfig": {"defaults": {"unit": "bytes"}}
+        },
+        {
+          "type": "stat",
+          "title": "Memory available",
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8},
+          "id": 7,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [{
+            "expr": "node_memory_MemAvailable_bytes",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "yellow", "value": 536870912},
+                  {"color": "green", "value": 1073741824}
+                ]
+              }
+            }
+          },
+          "options": {"colorMode": "value"}
+        },
+        {
+          "type": "timeseries",
+          "title": "NAS storage over time",
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+          "id": 8,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {
+              "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+              "legendFormat": "Used",
+              "refId": "A"
+            },
+            {
+              "expr": "node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+              "legendFormat": "Free",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {"defaults": {"unit": "bytes"}}
+        },
+        {
+          "type": "timeseries",
+          "title": "Memory & CPU over time",
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+          "id": 9,
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "targets": [
+            {
+              "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+              "legendFormat": "Memory %",
+              "refId": "A"
+            },
+            {
+              "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+              "legendFormat": "CPU %",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["homelab"],
+      "templating": {"list": []},
+      "time": {"from": "now-3h", "to": "now"},
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Homelab Overview",
+      "uid": "homelab-overview",
+      "version": 1,
+      "weekStart": ""
+    }

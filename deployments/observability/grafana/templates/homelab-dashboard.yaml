@@ -1,0 +1,243 @@
+---
+# Custom focused dashboard for nas-pi homelab.
+# Loaded automatically by the grafana-sidecar (label grafana_dashboard).
+# Queries pinned to the actual NAS hostpath disk and use MemAvailable so
+# numbers match `free -h` and `df -h` on the Pi instead of the default
+# "k3s-cluster-monitoring" dashboard which sums every bind-mount.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homelab-overview-dashboard
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"
+data:
+  homelab-overview.json: |
+    {
+      "title": "Homelab Overview",
+      "uid": "homelab-overview",
+      "schemaVersion": 38,
+      "version": 1,
+      "tags": ["homelab"],
+      "timezone": "browser",
+      "time": {"from": "now-3h", "to": "now"},
+      "refresh": "30s",
+      "panels": [
+        {
+          "id": 1,
+          "type": "row",
+          "title": "NAS Storage (films + series)",
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+          "collapsed": false
+        },
+        {
+          "id": 2,
+          "type": "gauge",
+          "title": "NAS Usage",
+          "gridPos": {"h": 6, "w": 6, "x": 0, "y": 1},
+          "datasource": null,
+          "targets": [{
+            "expr": "(node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}) / node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} * 100",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "orange", "value": 85},
+                  {"color": "red", "value": 95}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "NAS Free Space",
+          "gridPos": {"h": 6, "w": 6, "x": 6, "y": 1},
+          "datasource": null,
+          "targets": [{
+            "expr": "node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "fixed", "fixedColor": "green"},
+              "decimals": 1
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "textMode": "value_and_name"
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "NAS Used",
+          "gridPos": {"h": 6, "w": 6, "x": 12, "y": 1},
+          "datasource": null,
+          "targets": [{
+            "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"} - node_filesystem_avail_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "fixed", "fixedColor": "orange"},
+              "decimals": 1
+            }
+          },
+          "options": {"colorMode": "value", "graphMode": "area"}
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "NAS Total",
+          "gridPos": {"h": 6, "w": 6, "x": 18, "y": 1},
+          "datasource": null,
+          "targets": [{
+            "expr": "node_filesystem_size_bytes{mountpoint=\"/srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363\"}",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "fixed", "fixedColor": "blue"},
+              "decimals": 1
+            }
+          },
+          "options": {"colorMode": "value"}
+        },
+        {
+          "id": 10,
+          "type": "row",
+          "title": "Memory (matches `free -h`)",
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 7},
+          "collapsed": false
+        },
+        {
+          "id": 11,
+          "type": "gauge",
+          "title": "Memory Usage",
+          "gridPos": {"h": 6, "w": 8, "x": 0, "y": 8},
+          "datasource": null,
+          "targets": [{
+            "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "orange", "value": 85},
+                  {"color": "red", "value": 95}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 12,
+          "type": "stat",
+          "title": "Memory Used",
+          "gridPos": {"h": 6, "w": 8, "x": 8, "y": 8},
+          "datasource": null,
+          "targets": [{
+            "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "fixed", "fixedColor": "orange"},
+              "decimals": 2
+            }
+          },
+          "options": {"colorMode": "value", "graphMode": "area"}
+        },
+        {
+          "id": 13,
+          "type": "stat",
+          "title": "Memory Available",
+          "gridPos": {"h": 6, "w": 8, "x": 16, "y": 8},
+          "datasource": null,
+          "targets": [{
+            "expr": "node_memory_MemAvailable_bytes",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "color": {"mode": "fixed", "fixedColor": "green"},
+              "decimals": 2
+            }
+          },
+          "options": {"colorMode": "value", "graphMode": "area"}
+        },
+        {
+          "id": 20,
+          "type": "row",
+          "title": "CPU",
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 14},
+          "collapsed": false
+        },
+        {
+          "id": 21,
+          "type": "gauge",
+          "title": "CPU Usage (1m avg)",
+          "gridPos": {"h": 6, "w": 12, "x": 0, "y": 15},
+          "datasource": null,
+          "targets": [{
+            "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+            "refId": "A"
+          }],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 60},
+                  {"color": "orange", "value": 80},
+                  {"color": "red", "value": 90}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 22,
+          "type": "timeseries",
+          "title": "CPU Usage Over Time",
+          "gridPos": {"h": 6, "w": 12, "x": 12, "y": 15},
+          "datasource": null,
+          "targets": [{
+            "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+            "refId": "A",
+            "legendFormat": "CPU %"
+          }],
+          "fieldConfig": {
+            "defaults": {"unit": "percent", "min": 0, "max": 100}
+          }
+        }
+      ]
+    }
