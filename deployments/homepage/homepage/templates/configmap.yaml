@@ -88,15 +88,12 @@ data:
               url: http://qbittorrent.media.svc.cluster.local:8080
               username: {{`{{HOMEPAGE_VAR_QBIT_USER}}`}}
               password: {{`{{HOMEPAGE_VAR_QBIT_PASS}}`}}
-        - Prometheus:
-            href: https://prometheus.home.keeposz.dev
-            description: Metrics
-            icon: prometheus.svg
-            siteMonitor: https://prometheus.home.keeposz.dev
-            widget:
-              type: prometheus
-              url: https://prometheus.home.keeposz.dev
     - Tools:
+        - Glances:
+            href: https://glances.home.keeposz.dev
+            description: Real-time system monitor
+            icon: glances.png
+            siteMonitor: https://glances.home.keeposz.dev
         - Recepten:
             href: https://recepten.home.keeposz.dev
             description: Recept app
@@ -112,11 +109,6 @@ data:
             description: Dependency updates
             icon: renovate.svg
             siteMonitor: https://renovate.home.keeposz.dev
-        - Grafana:
-            href: https://grafana.home.keeposz.dev
-            description: Dashboards
-            icon: grafana.svg
-            siteMonitor: https://grafana.home.keeposz.dev
 
   widgets.yaml: |
     - resources:
