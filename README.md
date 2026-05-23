@@ -14,7 +14,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **Prometheus + Grafana** | Monitoring and dashboards |
 | **Renovate Operator** | In-cluster dependency updates with CRD-based scheduling + UI |
 | **Tailscale subnet router** | VPN access to cluster services |
-| **Plex** | Media server |
+| **Jellyfin** | Media server |
 | **Recepten** | Custom recipe app |
 
 ## Architecture
@@ -26,10 +26,10 @@ deployments/
 ├── application.yaml          # Root Application — discovers all sub-apps
 ├── argocd/argocd/            # Each sub-app is a local Helm chart
 ├── cert-manager/cert-manager/
-├── plex/plex/
+├── media/jellyfin/
 │   ├── application.yaml      # ArgoCD Application
-│   ├── Chart.yaml            # Chart metadata
-│   └── templates/            # Raw manifests, rendered by Helm
+│   ├── Chart.yaml            # Chart metadata (declares upstream jellyfin-helm as dependency)
+│   └── ...
 └── ...
 ```
 
@@ -37,7 +37,7 @@ The root Application watches `*/*/application.yaml` files and deploys each as it
 
 Two flavors of charts are used:
 - **External charts**: `Chart.yaml` declares a `dependencies:` entry (e.g. argo-cd, grafana, prometheus, cert-manager, sealed-secrets). Versions are pinned for controlled upgrades.
-- **Self-contained charts**: own `templates/` directory with raw Kubernetes manifests (e.g. plex, recepten, tailscale subnet router).
+- **Self-contained charts**: own `templates/` directory with raw Kubernetes manifests (e.g. recepten, tailscale subnet router, *arr stack).
 
 ## Prerequisites
 
