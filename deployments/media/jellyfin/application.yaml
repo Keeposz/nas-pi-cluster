@@ -20,7 +20,7 @@ spec:
             fsGroup: 100
 
           service:
-            type: ClusterIP
+            type: LoadBalancer
             port: 8096
 
           ingress:
