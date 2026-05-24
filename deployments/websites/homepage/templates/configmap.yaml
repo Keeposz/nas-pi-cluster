@@ -37,15 +37,6 @@ data:
               type: plex
               url: http://plex.media.svc.cluster.local:32400
               key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
-        - Jellyfin:
-            href: https://jellyfin.home.keeposz.dev
-            description: Media server
-            icon: jellyfin.svg
-            siteMonitor: https://jellyfin.home.keeposz.dev
-            widget:
-              type: jellyfin
-              url: http://jellyfin.media.svc.cluster.local:8096
-              key: {{`{{HOMEPAGE_VAR_JELLYFIN_KEY}}`}}
         - Seerr:
             href: https://seerr.home.keeposz.dev
             description: Request films & series

@@ -14,7 +14,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **Prometheus + Grafana** | Monitoring and dashboards |
 | **Renovate Operator** | In-cluster dependency updates with CRD-based scheduling + UI |
 | **Tailscale subnet router** | VPN access to cluster services |
-| **Plex + Jellyfin** | Media servers (parallel — both pointing at same media folders) |
+| **Plex** | Media server |
 | **Recepten** | Custom recipe app |
 
 ## Architecture
@@ -26,9 +26,9 @@ deployments/
 ├── application.yaml          # Root Application — discovers all sub-apps
 ├── argocd/argocd/            # Each sub-app is a local Helm chart
 ├── cert-manager/cert-manager/
-├── media/jellyfin/
+├── media/plex/
 │   ├── application.yaml      # ArgoCD Application
-│   ├── Chart.yaml            # Chart metadata (declares upstream jellyfin-helm as dependency)
+│   ├── Chart.yaml            # Chart metadata (declares upstream plex-media-server as dependency)
 │   └── ...
 └── ...
 ```
