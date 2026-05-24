@@ -51,8 +51,40 @@ spec:
             PLEX_UID: "1000"
             PLEX_GID: "100"
             TZ: "Europe/Brussels"
-            HOSTNAME: "PLEX"
+            HOSTNAME: "NAS-Pi"
             ALLOWED_NETWORKS: "192.168.0.0/16,10.0.0.0/8"
+            # Pin Plex to "stable" update channel — image tag in git is the
+            # source of truth for upgrades, not Plex's in-app updater.
+            PLEX_UPDATE_CHANNEL: "5"
+
+            # PLEX_PREFERENCE_* lines pre-seed /config/.../Preferences.xml on
+            # FIRST RUN ONLY. After that, Web UI changes win (Plex doesn't
+            # re-sync these). They exist so a fresh install on another cluster
+            # comes up with the same sane defaults out of the box.
+            PLEX_PREFERENCE_1: "FriendlyName=NAS-Pi"
+            # Background tasks (library scan, metadata refresh, DB maintenance)
+            # only run between 02:00-05:00 → no Pi load while you're watching.
+            PLEX_PREFERENCE_2: "ButlerStartHour=2"
+            PLEX_PREFERENCE_3: "ButlerEndHour=5"
+            PLEX_PREFERENCE_4: "ButlerTaskBackupDatabase=1"
+            # Disable Plex Relay (privacy + no upstream bandwidth abuse).
+            PLEX_PREFERENCE_5: "RelayEnabled=0"
+            # No IPv6, no DLNA, no online media sources, no webhooks
+            # (free tier blocks anyway). Reduces attack surface + log noise.
+            PLEX_PREFERENCE_6: "EnableIPv6=0"
+            PLEX_PREFERENCE_7: "DlnaEnabled=0"
+            PLEX_PREFERENCE_8: "OnlineMediaSourcesEnabled=0"
+            PLEX_PREFERENCE_9: "WebHooksEnabled=0"
+            PLEX_PREFERENCE_10: "DvrShowUnsupportedDevices=0"
+            # Hourly auto-scan picks up Radarr/Sonarr imports without UI clicks.
+            PLEX_PREFERENCE_11: "ScheduledLibraryUpdatesEnabled=1"
+            PLEX_PREFERENCE_12: "ScheduledLibraryUpdateInterval=3600"
+            # Use all available CPU cores for transcoding (0 = auto). Override
+            # to a lower number if you want to cap Pi load during transcodes.
+            PLEX_PREFERENCE_13: "TranscoderThreads=0"
+            # Disable Plex's in-app auto-update — image tag in git wins.
+            PLEX_PREFERENCE_14: "ButlerUpdateChannel=8"
+            PLEX_PREFERENCE_15: "AutoUpdateEnabled=0"
 
           extraVolumes:
             - name: films
