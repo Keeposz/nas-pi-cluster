@@ -14,7 +14,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **Prometheus + Grafana** | Monitoring and dashboards |
 | **Renovate Operator** | In-cluster dependency updates with CRD-based scheduling + UI |
 | **Tailscale subnet router** | VPN access to cluster services |
-| **Jellyfin** | Media server |
+| **Plex + Jellyfin** | Media servers (parallel — both pointing at same media folders) |
 | **Recepten** | Custom recipe app |
 
 ## Architecture

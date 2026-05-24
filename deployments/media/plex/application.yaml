@@ -1,0 +1,79 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plex
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:Keeposz/nas-pi-cluster.git
+    path: deployments/media/plex
+    targetRevision: HEAD
+    helm:
+      releaseName: plex
+      valuesObject:
+        plex-media-server:
+          image:
+            registry: index.docker.io
+            repository: plexinc/pms-docker
+            pullPolicy: IfNotPresent
+
+          service:
+            type: LoadBalancer
+            port: 32400
+
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            url: plex.home.keeposz.dev
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            tls:
+              - hosts:
+                  - plex.home.keeposz.dev
+                secretName: plex-tls
+
+          pms:
+            storageClassName: local-path
+            configStorage: 5Gi
+            resources:
+              requests:
+                memory: "384Mi"
+                cpu: "500m"
+              limits:
+                memory: "1536Mi"
+                cpu: "1500m"
+
+          extraEnv:
+            PLEX_UID: "1000"
+            PLEX_GID: "100"
+            TZ: "Europe/Brussels"
+            HOSTNAME: "PLEX"
+            ALLOWED_NETWORKS: "192.168.0.0/16,10.0.0.0/8"
+
+          extraVolumes:
+            - name: films
+              hostPath:
+                path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/FILMS
+            - name: series
+              hostPath:
+                path: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363/NAS-PI/PLEX/SERIES
+
+          extraVolumeMounts:
+            - name: films
+              mountPath: /data/films
+            - name: series
+              mountPath: /data/series
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

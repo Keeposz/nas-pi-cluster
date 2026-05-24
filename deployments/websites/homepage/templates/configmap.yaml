@@ -28,6 +28,15 @@ data:
 
   services.yaml: |
     - Media:
+        - Plex:
+            href: https://plex.home.keeposz.dev
+            description: Media server
+            icon: plex.svg
+            siteMonitor: https://plex.home.keeposz.dev
+            widget:
+              type: plex
+              url: http://plex.media.svc.cluster.local:32400
+              key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
         - Jellyfin:
             href: https://jellyfin.home.keeposz.dev
             description: Media server

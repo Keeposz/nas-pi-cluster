@@ -1,0 +1,10 @@
+---
+apiVersion: v2
+appVersion: "1.0"
+description: Plex Media Server
+name: plex
+version: "1.0"
+dependencies:
+  - name: plex-media-server
+    version: "1.5.0"
+    repository: https://plexinc.github.io/pms-docker
