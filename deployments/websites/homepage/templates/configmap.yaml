@@ -35,7 +35,7 @@ data:
             siteMonitor: https://plex.home.keeposz.dev
             widget:
               type: plex
-              url: http://plex.media.svc.cluster.local:32400
+              url: http://plex-plex-media-server.media.svc.cluster.local:32400
               key: {{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}
         - Seerr:
             href: https://seerr.home.keeposz.dev
