@@ -36,6 +36,21 @@ spec:
             limits:
               memory: "384Mi"
               cpu: "500m"
+          # Bazarr's Python process can crash silently while s6-overlay keeps
+          # the container "Running", causing 502s with no restart. TCP probe
+          # on the web port catches this and triggers a restart automatically.
+          readinessProbe:
+            tcpSocket:
+              port: 6767
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 6767
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
           volumeMounts:
             - name: config
               mountPath: /config
