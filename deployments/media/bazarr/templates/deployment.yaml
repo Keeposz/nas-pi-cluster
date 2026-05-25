@@ -34,8 +34,8 @@ spec:
               memory: "224Mi"   # was 128 — observed ~183Mi (was under-requested)
               cpu: "50m"
             limits:
-              memory: "600Mi"
-              cpu: "500m"
+              memory: "800Mi"
+              cpu: "1500m"
           # Bazarr's Python process can crash silently while s6-overlay keeps
           # the container "Running", causing 502s with no restart. TCP probe
           # on the web port catches this and triggers a restart automatically.
