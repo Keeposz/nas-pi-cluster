@@ -48,7 +48,7 @@ spec:
                   name: gluetun-wg
                   key: WIREGUARD_PRIVATE_KEY
             - name: SERVER_COUNTRIES
-              value: "Switzerland"
+              value: "Luxembourg"
             - name: SERVER_CATEGORIES
               value: "P2P"
             - name: TZ
