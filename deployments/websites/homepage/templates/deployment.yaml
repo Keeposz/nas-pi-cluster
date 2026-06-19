@@ -19,6 +19,11 @@ spec:
       serviceAccountName: homepage
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000        
+        runAsGroup: 1000
+        fsGroup: 1000          # make the "config" emptyDir writable by non-root
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: copy-config
           image: busybox:1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
@@ -26,6 +31,11 @@ spec:
             - sh
             - -c
             - cp /config-src/*.yaml /app/config/
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: config-src
               mountPath: /config-src
@@ -35,6 +45,11 @@ spec:
       containers:
         - name: homepage
           image: ghcr.io/gethomepage/homepage:v1.13.2@sha256:a0b71c8e757298d02560186bab9fbe3fc2d375c523a62cc1019177b37e48aa28
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3000
               name: http
