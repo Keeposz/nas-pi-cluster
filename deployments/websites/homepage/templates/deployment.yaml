@@ -17,6 +17,8 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: homepage
+      securityContext:
+        runAsNonRoot: true
       initContainers:
         - name: copy-config
           image: busybox:1.36
