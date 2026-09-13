@@ -6,5 +6,5 @@ name: renovate-operator
 version: "1.0"
 dependencies:
   - name: renovate-operator
-    version: "4.14.1"
+    version: "6.3.0"
     repository: oci://ghcr.io/mogenius/helm-charts
