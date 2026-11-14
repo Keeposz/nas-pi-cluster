@@ -225,4 +225,4 @@ kubeseal -f my-secret.yaml -o yaml > my-secret-sealed.yaml
 
 ## License
 
-Personal homelab — feel free to fork and adapt.
+Personal homelab --> feel free to fork and adapt.
