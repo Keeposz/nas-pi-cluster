@@ -153,7 +153,7 @@ Renovate runs in **GitHub Actions** via [.github/workflows/renovate.yml](.github
 - GitHub Actions in `.github/workflows/*.yml`
 - The K3s version in `host_vars/nas-pi/vars.yml` (one PR per minor, since Kubernetes can't skip minors). Merging only changes git: run `ansible-playbook site.yml` to upgrade the Pi.
 
-Config lives in [renovate.json](renovate.json). Each app gets one PR with all its chart and image bumps (major, minor and patch together, straight to the latest version), named after its folder in `deployments/`. GitHub Actions bumps share one PR. Nothing merges automatically and there are no PR limits. Merge a PR → ArgoCD deploys.
+Config lives in [renovate.json](renovate.json). Each app gets one PR with all its chart and image bumps (major, minor and patch together, straight to the latest version), named after its folder in `deployments/`. GitHub Actions bumps share one PR. Nothing merges automatically and there are no PR limits. New releases wait 3 days before they get a PR, so broken releases are usually fixed or pulled by then; registries without release dates (ghcr.io, lscr.io) get no delay. Merge a PR → ArgoCD deploys.
 
 Each run writes a job summary with what was merged and which updates are still open. Open updates also appear in the **Dependency Dashboard** issue, where ticking a checkbox creates the PR on the next run.
 

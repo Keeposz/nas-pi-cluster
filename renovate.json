@@ -11,6 +11,8 @@
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "separateMajorMinor": false,
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
   "kubernetes": {
     "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
   },
