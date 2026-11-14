@@ -13,6 +13,9 @@
   "separateMajorMinor": false,
   "minimumReleaseAge": "3 days",
   "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "statusCheckNames": {
+    "minimumReleaseAge": null
+  },
   "kubernetes": {
     "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
   },
