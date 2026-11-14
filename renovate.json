@@ -12,6 +12,9 @@
     "dependencies"
   ],
   "prConcurrentLimit": 5,
+  "kubernetes": {
+    "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
+  },
   "packageRules": [
     {
       "description": "Skip floating :latest tags (we want to stay on latest by restarting pods)",
