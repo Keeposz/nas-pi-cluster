@@ -34,7 +34,7 @@ jobs:
           RENOVATE_REPORT_TYPE: file
           RENOVATE_REPORT_PATH: /tmp/renovate-report.json
           RENOVATE_LOG_FILE: /tmp/renovate-log.ndjson
-          RENOVATE_LOG_FILE_LEVEL: info
+          RENOVATE_LOG_FILE_LEVEL: debug
 
       - name: Write summary
         if: always()
@@ -120,6 +120,16 @@ jobs:
             --argjson merged "$merged" \
             --argjson data "$data" \
             -f "$RUNNER_TEMP/summary.jq" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Explain early stop
+        if: always() && env.RUN_RESULT != '' && env.RUN_RESULT != 'done' && env.RUN_RESULT != 'automerged'
+        env:
+          LOG: /tmp/renovate-log.ndjson
+        run: |
+          # the info log only says renovate stopped, the debug records right before it say why
+          grep -B 80 '"msg":"Repository finished"' "$LOG" \
+            | jq -r '"\(.time) \(.msg)\(if .branch then " [\(.branch)]" else "" end)\(if .err then " | \(.err.message // .err | tostring)" else "" end)"' \
+            || true
 
       - name: Send Telegram digest
         env:
