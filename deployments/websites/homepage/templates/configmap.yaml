@@ -23,7 +23,7 @@ data:
         header: false
       Tools:
         style: row
-        columns: 4
+        columns: 3
         header: false
 
   services.yaml: |
@@ -109,10 +109,6 @@ data:
             description: GitOps deployments
             icon: argo-cd.svg
             siteMonitor: https://argocd.home.keeposz.dev
-        - Renovate:
-            href: https://github.com/Keeposz/nas-pi-cluster/actions/workflows/renovate.yml
-            description: Dependency updates (GitHub Actions)
-            icon: renovate.svg
 
   widgets.yaml: |
     - resources:

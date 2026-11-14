@@ -9,7 +9,7 @@
     "dependencies"
   ],
   "prHourlyLimit": 0,
-  "prConcurrentLimit": 5,
+  "prConcurrentLimit": 0,
   "kubernetes": {
     "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
   },
@@ -30,8 +30,8 @@
       "groupName": "{{depName}} chart"
     },
     {
-      "description": "patch and digest bumps are mostly security and bug fixes, merge them without a click (no ci checks in this repo)",
-      "matchUpdateTypes": ["patch", "digest", "pin", "pinDigest"],
+      "description": "everything except majors merges without a click, majors stay a pr for review (no ci checks in this repo)",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
       "automerge": true,
       "ignoreTests": true
     }

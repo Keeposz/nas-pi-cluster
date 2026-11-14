@@ -12,7 +12,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **cert-manager** | TLS certificates via Let's Encrypt + Cloudflare DNS-01 |
 | **Sealed Secrets** | Encrypted secrets safe to commit to Git |
 | **Prometheus + Grafana** | Monitoring and dashboards |
-| **Renovate** | Daily dependency updates via GitHub Actions, patch and digest bumps merge automatically |
+| **Renovate** | Daily dependency updates via GitHub Actions, everything except majors merges automatically |
 | **Tailscale subnet router** | VPN access to cluster services |
 | **Plex** | Media server |
 | **Recepten** | Custom recipe app |
@@ -152,7 +152,7 @@ Renovate runs in **GitHub Actions** via [.github/workflows/renovate.yml](.github
 - Container image tags in `deployments/**/templates/*.yaml` (skips `:latest`)
 - GitHub Actions in `.github/workflows/*.yml`
 
-Config lives in [renovate.json](renovate.json). Patch and digest updates merge automatically; minor and major updates open a PR for review. Renovate merges at most two updates per run, the rest follow in the next runs. Merge a PR → ArgoCD deploys.
+Config lives in [renovate.json](renovate.json). Minor, patch and digest updates merge automatically; major updates open a PR for review. There are no PR limits. Renovate merges at most two updates per run, the rest follow in the next runs. Merge a PR → ArgoCD deploys.
 
 Each run writes a job summary with what was merged and which updates are still open. Open updates also appear in the **Dependency Dashboard** issue, where ticking a checkbox creates the PR on the next run.
 
