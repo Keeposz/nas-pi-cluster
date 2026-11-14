@@ -4,6 +4,9 @@ kind: Application
 metadata:
   name: renovate-operator
   namespace: argocd
+  # cascade delete: removing this app also removes the operator, its CRD and RBAC
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:

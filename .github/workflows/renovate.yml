@@ -16,7 +16,12 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      pull-requests: read
     steps:
+      - name: Record start time
+        run: echo "STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - name: Run Renovate
         uses: renovatebot/github-action@266fef21329c44765ad42f9dea1f01f5d2d91084 # v46.3.13
         with:
@@ -25,3 +30,81 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_GIT_AUTHOR: "Keeposz <205087396+Keeposz@users.noreply.github.com>"
+          RENOVATE_REPORT_TYPE: file
+          RENOVATE_REPORT_PATH: /tmp/renovate-report.json
+
+      - name: Write summary
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT: /tmp/renovate-report.json
+        run: |
+          # renovate restarts after an automerge and its report only covers the last pass,
+          # so merges come from github and everything still open comes from the report
+          merged=$(gh pr list --repo "$GITHUB_REPOSITORY" --state merged --limit 30 \
+            --json number,title,url,mergedAt,headRefName \
+            --jq "[.[] | select((.headRefName | startswith(\"renovate/\")) and .mergedAt >= \"$STARTED_AT\")]" \
+            || echo '[]')
+
+          if [[ -s "$REPORT" ]]; then
+            has_report=yes
+            data=$(jq -c --arg repo "$GITHUB_REPOSITORY" '.repositories[$repo] // {}' "$REPORT")
+          else
+            has_report=no
+            data='{}'
+          fi
+
+          cat > "$RUNNER_TEMP/summary.jq" <<'JQ'
+          def short: sub("^sha256:"; "") | .[0:7];
+          def old_version: if .updateType == "digest" then (.currentDigest // "" | short) else (.currentVersion // .currentValue // "") end;
+          def new_version: if .updateType == "digest" or .updateType == "pinDigest" then (.newDigest // "" | short) else (.newVersion // .newValue // "") end;
+          def pr: if .prNo then " [#\(.prNo)](https://github.com/\($repo)/pull/\(.prNo))" else "" end;
+          def status:
+            if   .result == "pr-created" then "🆕 PR opened"
+            elif .result == "already-existed" then "🚫 Closed earlier, ignored"
+            elif .result == "pending" then "⏳ Waiting for release age or checks"
+            elif .result == "needs-approval" or .result == "needs-pr-approval" then "🖐️ Needs approval in dashboard"
+            elif .result == "not-scheduled" or .result == "update-not-scheduled" then "🗓️ Outside schedule"
+            elif .result == "error" then "❌ Error, see log"
+            elif .result == null then "⏭️ Next run"
+            elif (.result | endswith("limit-reached")) then "⏸️ Limit reached, next run"
+            elif .prNo then "🔀 PR open"
+            else .result end;
+
+          ($data.branches // []) as $branches
+          | [$branches[] | select(.result != "automerged")] as $open
+          | ([$open[] | select(.prNo)] | length) as $prs
+          | ([$open[] | select(.prNo | not)] | length) as $waiting
+          | (if $data.dependencyDashboardIssue
+             then " · 📋 [Dependency Dashboard](https://github.com/\($repo)/issues/\($data.dependencyDashboardIssue))"
+             else "" end) as $dashboard
+          | "## 🔄 Renovate · `\($repo)`",
+            "",
+            "**\($merged | length)** merged · **\($prs)** PR open · **\($waiting)** waiting\($dashboard)",
+            "",
+            (if ($merged | length) > 0 then
+               "### ✅ Merged this run", "",
+               "| PR | Update |", "|---|---|",
+               ($merged[] | "| [#\(.number)](\(.url)) | \(.title) |"),
+               ""
+             else empty end),
+            (if ($open | length) > 0 then
+               "### 📦 Open updates", "",
+               "| Dependency | Change | Type | Status |", "|---|---|---|---|",
+               ([$open[] | . as $b | (.upgrades // [])[] | {b: $b, u: .}] | sort_by(.u.depName)[]
+                 | "| `\(.u.depName)` | `\(.u | old_version)` → `\(.u | new_version)` | \(.u.updateType) | \(.b | status)\(.b | pr) |"),
+               ""
+             else empty end),
+            (if $hasReport != "yes" then
+               "> [!WARNING]", "> Renovate wrote no report, check the **Run Renovate** step log."
+             elif ($merged | length) == 0 and ($open | length) == 0 then
+               "✨ Everything is up to date."
+             else empty end)
+          JQ
+
+          jq -nr \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg hasReport "$has_report" \
+            --argjson merged "$merged" \
+            --argjson data "$data" \
+            -f "$RUNNER_TEMP/summary.jq" >> "$GITHUB_STEP_SUMMARY"

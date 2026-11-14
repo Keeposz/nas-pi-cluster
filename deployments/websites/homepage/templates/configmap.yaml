@@ -110,10 +110,9 @@ data:
             icon: argo-cd.svg
             siteMonitor: https://argocd.home.keeposz.dev
         - Renovate:
-            href: https://renovate.home.keeposz.dev
-            description: Dependency updates
+            href: https://github.com/Keeposz/nas-pi-cluster/actions/workflows/renovate.yml
+            description: Dependency updates (GitHub Actions)
             icon: renovate.svg
-            siteMonitor: https://renovate.home.keeposz.dev
 
   widgets.yaml: |
     - resources:
