@@ -53,7 +53,7 @@ spec:
             TZ: "Europe/Brussels"
             HOSTNAME: "NAS-Pi"
             ALLOWED_NETWORKS: "192.168.0.0/16,10.0.0.0/8"
-            # Pin Plex to "stable" update channel — image tag in git is the
+            # Pin Plex to "stable" update channel: image tag in git is the
             # source of truth for upgrades, not Plex's in-app updater.
             PLEX_UPDATE_CHANNEL: "5"
 
@@ -82,7 +82,7 @@ spec:
             # Use all available CPU cores for transcoding (0 = auto). Override
             # to a lower number if you want to cap Pi load during transcodes.
             PLEX_PREFERENCE_13: "TranscoderThreads=0"
-            # Disable Plex's in-app auto-update — image tag in git wins.
+            # Disable Plex's in-app auto-update: image tag in git wins.
             PLEX_PREFERENCE_14: "ButlerUpdateChannel=8"
             PLEX_PREFERENCE_15: "AutoUpdateEnabled=0"
 

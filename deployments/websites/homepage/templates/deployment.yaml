@@ -62,7 +62,7 @@ spec:
                 optional: true
           resources:
             requests:
-              memory: "160Mi"   # was 128 — observed ~142Mi
+              memory: "160Mi"   # was 128, observed ~142Mi
               cpu: "50m"
             limits:
               memory: "384Mi"

@@ -23,7 +23,7 @@ App-of-apps GitOps pattern:
 
 ```
 deployments/
-├── application.yaml          # Root Application — discovers all sub-apps
+├── application.yaml          # Root Application, discovers all sub-apps
 ├── argocd/argocd/            # Each sub-app is a local Helm chart
 ├── cert-manager/cert-manager/
 ├── media/plex/
@@ -74,7 +74,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 ### 4. Bootstrap Sealed Secrets controller
 
-Install via Helm so you can decrypt repo-committed sealed secrets (you'll still need to re-encrypt secrets with **your own** cluster's key — see below):
+Install via Helm so you can decrypt repo-committed sealed secrets (you'll still need to re-encrypt secrets with **your own** cluster's key, see below):
 
 ```bash
 helm install sealed-secrets oci://registry-1.docker.io/bitnamicharts/sealed-secrets -n sealed-secrets --create-namespace
@@ -90,7 +90,7 @@ ArgoCD discovers all sub-apps and deploys them.
 
 ### 6. Re-encrypt secrets
 
-The SealedSecrets in this repo are encrypted with **my** cluster's private key. You can't decrypt them — they will fail to apply on your cluster. Replace each with secrets encrypted by **your** controller:
+The SealedSecrets in this repo are encrypted with **my** cluster's private key. You can't decrypt them, so they will fail to apply on your cluster. Replace each with secrets encrypted by **your** controller:
 
 ```bash
 echo -n "my-secret-value" | kubectl create secret generic my-secret \
@@ -99,9 +99,9 @@ echo -n "my-secret-value" | kubectl create secret generic my-secret \
 ```
 
 Apps that need this:
-- `deployments/cert-manager/cert-manager-config/templates/cert-manager-sealed-secret.yaml` — Cloudflare API token
-- `deployments/observability/grafana/grafana-sealed-secret.yaml` — Grafana admin password
-- `deployments/tailscale/subnet-router/templates/tailscale-sealed-secret.yaml` — Tailscale auth key
+- `deployments/cert-manager/cert-manager-config/templates/cert-manager-sealed-secret.yaml`: Cloudflare API token
+- `deployments/observability/grafana/grafana-sealed-secret.yaml`: Grafana admin password
+- `deployments/tailscale/subnet-router/templates/tailscale-sealed-secret.yaml`: Tailscale auth key
 
 ## Adding a new app
 
@@ -143,7 +143,7 @@ spec:
       - CreateNamespace=true
 ```
 
-Commit + push — the root Application picks it up on the next refresh.
+Commit + push, and the root Application picks it up on the next refresh.
 
 ## Update flow (Renovate + Telegram)
 

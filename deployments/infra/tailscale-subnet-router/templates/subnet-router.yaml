@@ -43,14 +43,14 @@ spec:
               value: "nas-pi-cluster"
           resources:
             requests:
-              memory: "64Mi"     # was 32Mi — observed up to ~50Mi steady state
+              memory: "64Mi"     # was 32Mi, observed up to ~50Mi steady state
               cpu: "25m"
             limits:
-              memory: "128Mi"    # was 64Mi — headroom for DERP switches / peer add bursts
+              memory: "128Mi"    # was 64Mi, headroom for DERP switches / peer add bursts
               cpu: "100m"
           # Lightweight liveness: only checks if the tailscale daemon socket is
           # responsive (i.e. the process itself is healthy). NOT a network/DERP
-          # connectivity test — the old netcheck probe was network-dependent
+          # connectivity test; the old netcheck probe was network-dependent
           # and killed the pod on transient DERP-relay slowness, causing more
           # outages than it fixed. Tailscale has its own internal reconnect
           # logic for tunnel/peer issues, so let it handle network blips
