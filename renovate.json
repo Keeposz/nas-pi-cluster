@@ -34,7 +34,7 @@
       "allowedVersions": "<20"
     },
     {
-      "description": "hold gluetun on 3.40: with 3.41.3 the nordvpn wireguard tunnel passes no traffic and the startup healthcheck loops (2026-11-14), retry later",
+      "description": "hold gluetun on 3.40: 3.41.3 gives each nordvpn server ~6s in its startup check and never got a tunnel up, 3.40 waits 60s per server and connects (2026-11-14), retry later",
       "matchDepNames": ["qmcgaw/gluetun"],
       "allowedVersions": "<3.41.0"
     },
