@@ -33,12 +33,15 @@ jobs:
           RENOVATE_GIT_AUTHOR: "Keeposz <205087396+Keeposz@users.noreply.github.com>"
           RENOVATE_REPORT_TYPE: file
           RENOVATE_REPORT_PATH: /tmp/renovate-report.json
+          RENOVATE_LOG_FILE: /tmp/renovate-log.ndjson
+          RENOVATE_LOG_FILE_LEVEL: info
 
       - name: Write summary
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           REPORT: /tmp/renovate-report.json
+          LOG: /tmp/renovate-log.ndjson
         run: |
           # renovate restarts after an automerge and its report only covers the last pass,
           # so merges come from github and everything still open comes from the report
@@ -54,6 +57,10 @@ jobs:
             has_report=no
             data='{}'
           fi
+
+          # renovate can stop a run early (e.g. repository-changed), its report is then incomplete
+          result=$(jq -r 'select(.msg == "Repository finished") | .result // empty' "$LOG" 2>/dev/null | tail -n 1 || true)
+          echo "RUN_RESULT=$result" >> "$GITHUB_ENV"
 
           cat > "$RUNNER_TEMP/summary.jq" <<'JQ'
           def short: sub("^sha256:"; "") | .[0:7];
@@ -83,6 +90,9 @@ jobs:
             "",
             "**\($merged | length)** merged · **\($prs)** PR open · **\($waiting)** waiting\($dashboard)",
             "",
+            (if $result != "" and $result != "done" and $result != "automerged" then
+               "> [!WARNING]", "> Renovate stopped early (`\($result)`), so this list is incomplete. Rerun the workflow.", ""
+             else empty end),
             (if ($merged | length) > 0 then
                "### ✅ Merged this run", "",
                "| PR | Update |", "|---|---|",
@@ -98,7 +108,7 @@ jobs:
              else empty end),
             (if $hasReport != "yes" then
                "> [!WARNING]", "> Renovate wrote no report, check the **Run Renovate** step log."
-             elif ($merged | length) == 0 and ($open | length) == 0 then
+             elif ($merged | length) == 0 and ($open | length) == 0 and ($result == "" or $result == "done") then
                "✨ Everything is up to date."
              else empty end)
           JQ
@@ -106,6 +116,7 @@ jobs:
           jq -nr \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg hasReport "$has_report" \
+            --arg result "$result" \
             --argjson merged "$merged" \
             --argjson data "$data" \
             -f "$RUNNER_TEMP/summary.jq" >> "$GITHUB_STEP_SUMMARY"
@@ -147,6 +158,9 @@ jobs:
           JQ
 
           text=$(jq -r --arg repo "$GITHUB_REPOSITORY" -f "$RUNNER_TEMP/telegram.jq" "$REPORT")
+          if [[ -n "$RUN_RESULT" && "$RUN_RESULT" != "done" && "$RUN_RESULT" != "automerged" ]]; then
+            text="⚠️ <b>Renovate stopped early</b> (${RUN_RESULT}), this list is incomplete. Rerun the workflow."$'\n\n'"${text}"
+          fi
           [[ -n "$text" ]] || { echo "everything up to date, nothing to send"; exit 0; }
 
           curl -sS --fail-with-body -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
