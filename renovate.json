@@ -5,12 +5,10 @@
     ":dependencyDashboard"
   ],
   "timezone": "Europe/Brussels",
-  "schedule": [
-    "before 5am on sunday"
-  ],
   "labels": [
     "dependencies"
   ],
+  "prHourlyLimit": 0,
   "prConcurrentLimit": 5,
   "kubernetes": {
     "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
@@ -30,6 +28,12 @@
         "helmv3"
       ],
       "groupName": "{{depName}} chart"
+    },
+    {
+      "description": "patch and digest bumps are mostly security and bug fixes, merge them without a click (no ci checks in this repo)",
+      "matchUpdateTypes": ["patch", "digest", "pin", "pinDigest"],
+      "automerge": true,
+      "ignoreTests": true
     }
   ]
 }
