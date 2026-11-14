@@ -29,9 +29,28 @@
       "groupName": "{{{replace '^deployments/[^/]+/([^/]+)/.*$' '$1' packageFile}}}"
     },
     {
+      "description": "linuxserver qbittorrent still has old ubuntu style tags like 20.04.1 that look newer than 5.x, ignore them",
+      "matchDepNames": ["lscr.io/linuxserver/qbittorrent"],
+      "allowedVersions": "<20"
+    },
+    {
       "description": "all github actions bumps in one pr",
       "matchManagers": ["github-actions"],
       "groupName": "github actions"
+    },
+    {
+      "description": "kubernetes can't skip minor versions, so k3s gets one pr per minor, merge them in order",
+      "matchPackageNames": ["k3s-io/k3s"],
+      "separateMajorMinor": true,
+      "separateMultipleMinor": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "versions annotated with a # renovate: comment, like k3s_version in host_vars",
+      "managerFilePatterns": ["/^host_vars/.+\\.ya?ml$/"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+\\w+: *(?<currentValue>\\S+)"]
     }
   ]
 }

@@ -11,18 +11,21 @@
     group: root
     mode: '0755'
 
-- name: Check if K3s is already installed
-  stat:
-    path: /usr/local/bin/k3s
-  register: k3s_binary
+- name: Check installed K3s version
+  command: /usr/local/bin/k3s --version
+  register: k3s_installed
+  changed_when: false
+  failed_when: false
 
-- name: Install K3s
+# installs on a fresh pi, upgrades in place when k3s_version (bumped by renovate) differs
+- name: Install or upgrade K3s
   shell: |
-    curl -sfL https://get.k3s.io | sh -s - server \
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3s_version }}" sh -s - server \
       --write-kubeconfig-mode 644 \
       --disable servicelb \
       --data-dir {{ k3s_data_dir }}
-  when: not k3s_binary.stat.exists
+  when: k3s_version not in (k3s_installed.stdout | default(''))
+  register: k3s_install
 
 - name: Wait for K3s to be ready
   shell: k3s kubectl get nodes
@@ -30,7 +33,7 @@
   retries: 30
   delay: 10
   until: k3s_ready.rc == 0
-  when: not k3s_binary.stat.exists
+  when: k3s_install is changed
 
 - name: Create .kube directory for jonas
   file:

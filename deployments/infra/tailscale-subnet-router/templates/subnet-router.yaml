@@ -22,7 +22,7 @@ spec:
       priorityClassName: system-cluster-critical
       containers:
         - name: tailscale
-          image: ghcr.io/tailscale/tailscale:latest
+          image: ghcr.io/tailscale/tailscale:v1.104.7
           securityContext:
             capabilities:
               add:
