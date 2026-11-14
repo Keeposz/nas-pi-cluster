@@ -31,7 +31,7 @@ spec:
       # VPN tunnel + DNS are ready, which left DHT/trackers permanently broken.
       initContainers:
         - name: gluetun
-          image: qmcgaw/gluetun:v3.41.3
+          image: qmcgaw/gluetun:v3.40.0
           restartPolicy: Always
           securityContext:
             capabilities:
