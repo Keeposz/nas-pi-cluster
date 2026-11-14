@@ -109,3 +109,51 @@ jobs:
             --argjson merged "$merged" \
             --argjson data "$data" \
             -f "$RUNNER_TEMP/summary.jq" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Send Telegram digest
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REPORT: /tmp/renovate-report.json
+        run: |
+          # one message per run listing every open update, instead of one message per pr event
+          [[ -s "$REPORT" ]] || { echo "no renovate report, nothing to send"; exit 0; }
+
+          cat > "$RUNNER_TEMP/telegram.jq" <<'JQ'
+          def esc: tostring | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
+          def short: sub("^sha256:"; "") | .[0:7];
+          def old_version: if .updateType == "digest" then (.currentDigest // "" | short) else (.currentVersion // .currentValue // "") end;
+          def new_version: if .updateType == "digest" or .updateType == "pinDigest" then (.newDigest // "" | short) else (.newVersion // .newValue // "") end;
+          def url: "https://github.com/\($repo)";
+
+          (.repositories[$repo] // {})
+          | .dependencyDashboardIssue as $dashboard
+          | [(.branches // [])[] | select(.result != "automerged" and ((.upgrades // []) | length) > 0)]
+          | sort_by(.branchName)
+          | if length == 0 then empty else
+              "<b>🔄 Renovate</b> · \($repo | split("/") | last | esc)",
+              "<b>\(length)</b> app\(if length == 1 then "" else "s" end) with updates"
+                + (if $dashboard then " · <a href=\"\(url)/issues/\($dashboard)\">dashboard</a>" else "" end),
+              (.[]
+                | (.branchName | sub("^renovate/"; "") | esc) as $app
+                | (if .result == "pr-created" then "🆕" elif .prNo then "🔀" else "⏳" end) as $icon
+                | (if .prNo then "<a href=\"\(url)/pull/\(.prNo)\"><b>\($app)</b></a>" else "<b>\($app)</b>" end) as $title
+                | "",
+                  "\($icon) \($title)",
+                  (.upgrades[]
+                    | "• \(.depName // "?" | split("/") | last | esc) <code>\(old_version | esc)</code> → <code>\(new_version | esc)</code>"
+                      + (if .updateType == "major" then " ⚠️ major" else "" end)))
+            end
+          JQ
+
+          text=$(jq -r --arg repo "$GITHUB_REPOSITORY" -f "$RUNNER_TEMP/telegram.jq" "$REPORT")
+          [[ -n "$text" ]] || { echo "everything up to date, nothing to send"; exit 0; }
+
+          curl -sS --fail-with-body -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${text}" \
+            --data-urlencode "parse_mode=HTML" \
+            --data-urlencode "disable_web_page_preview=true" \
+            -o "$RUNNER_TEMP/telegram.json" \
+            -w "HTTP %{http_code}\n" \
+            || { cat "$RUNNER_TEMP/telegram.json"; exit 1; }

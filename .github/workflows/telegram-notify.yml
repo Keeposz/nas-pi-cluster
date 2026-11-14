@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   notify:
+    # renovate prs are reported in one digest per run by the Renovate workflow
+    if: ${{ !startsWith(github.head_ref, 'renovate/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Send Telegram notification
