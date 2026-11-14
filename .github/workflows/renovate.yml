@@ -2,8 +2,9 @@ name: Renovate
 
 on:
   schedule:
-    # daily 04:00 UTC = 05:00 Europe/Brussels (winter) / 06:00 (summer)
-    - cron: "0 4 * * *"
+    # every morning at 08:00 brussels time, summer and winter time handled by github
+    - cron: "0 8 * * *"
+      timezone: "Europe/Brussels"
   workflow_dispatch:
 
 permissions: {}

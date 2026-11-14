@@ -10,6 +10,7 @@
   ],
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
+  "separateMajorMinor": false,
   "kubernetes": {
     "managerFilePatterns": ["/^deployments/.+/templates/.+\\.ya?ml$/"]
   },
@@ -23,17 +24,14 @@
       "enabled": false
     },
     {
-      "description": "Group all Helm chart updates per app into a single PR",
-      "matchManagers": [
-        "helmv3"
-      ],
-      "groupName": "{{depName}} chart"
+      "description": "one pr per app with all its chart and image bumps (majors included), named after the app folder",
+      "matchFileNames": ["deployments/**"],
+      "groupName": "{{{replace '^deployments/[^/]+/([^/]+)/.*$' '$1' packageFile}}}"
     },
     {
-      "description": "everything except majors merges without a click, majors stay a pr for review (no ci checks in this repo)",
-      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
-      "automerge": true,
-      "ignoreTests": true
+      "description": "all github actions bumps in one pr",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
     }
   ]
 }

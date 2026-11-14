@@ -12,7 +12,7 @@ A single-node K3s homelab on a Raspberry Pi, managed via GitOps with ArgoCD. App
 | **cert-manager** | TLS certificates via Let's Encrypt + Cloudflare DNS-01 |
 | **Sealed Secrets** | Encrypted secrets safe to commit to Git |
 | **Prometheus + Grafana** | Monitoring and dashboards |
-| **Renovate** | Daily dependency updates via GitHub Actions, everything except majors merges automatically |
+| **Renovate** | Daily dependency check via GitHub Actions, one PR per app |
 | **Tailscale subnet router** | VPN access to cluster services |
 | **Plex** | Media server |
 | **Recepten** | Custom recipe app |
@@ -147,12 +147,12 @@ Commit + push — the root Application picks it up on the next refresh.
 
 ## Update flow (Renovate + Telegram)
 
-Renovate runs in **GitHub Actions** via [.github/workflows/renovate.yml](.github/workflows/renovate.yml): every day at 04:00 UTC, or on demand with **Run workflow** in the Actions tab. It scans `Keeposz/nas-pi-cluster` for:
+Renovate runs in **GitHub Actions** via [.github/workflows/renovate.yml](.github/workflows/renovate.yml): every morning at 08:00 Europe/Brussels, or on demand with **Run workflow** in the Actions tab. It scans `Keeposz/nas-pi-cluster` for:
 - Helm chart dependencies pinned in `Chart.yaml`
 - Container image tags in `deployments/**/templates/*.yaml` (skips `:latest`)
 - GitHub Actions in `.github/workflows/*.yml`
 
-Config lives in [renovate.json](renovate.json). Minor, patch and digest updates merge automatically; major updates open a PR for review. There are no PR limits. Renovate merges at most two updates per run, the rest follow in the next runs. Merge a PR → ArgoCD deploys.
+Config lives in [renovate.json](renovate.json). Each app gets one PR with all its chart and image bumps (major, minor and patch together, straight to the latest version), named after its folder in `deployments/`. GitHub Actions bumps share one PR. Nothing merges automatically and there are no PR limits. Merge a PR → ArgoCD deploys.
 
 Each run writes a job summary with what was merged and which updates are still open. Open updates also appear in the **Dependency Dashboard** issue, where ticking a checkbox creates the PR on the next run.
 
