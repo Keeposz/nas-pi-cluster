@@ -27,7 +27,7 @@ jobs:
         uses: renovatebot/github-action@acdd6bda8b035c99ce59d5675816af2aa65a1774 # v46.3.14
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          renovate-image: renovate/renovate:44.261.0@sha256:c906ab3da4b0dcf3a278822a578a4850e35c1173677515654b3d2a40d81d00d1
+          renovate-image: renovate/renovate:45.0.2@sha256:87835d4961b543ed5d88656fae463c374db18835c0eb107a81de91dae22d46c4
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_GIT_AUTHOR: "Keeposz <205087396+Keeposz@users.noreply.github.com>"
