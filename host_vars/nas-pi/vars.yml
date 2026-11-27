@@ -3,7 +3,7 @@ base_hostname: nas-pi
 nvme_mount: /srv/dev-disk-by-uuid-db0fba78-7fcc-48a0-8554-9f4d3f445363
 k3s_data_dir: "{{ nvme_mount }}/k3s-data"
 # renovate: datasource=github-releases depName=k3s-io/k3s
-k3s_version: v1.34.4+k3s1
+k3s_version: v1.36.6+k3s1
 media_path: "{{ nvme_mount }}/NAS-PI/PLEX"
 domain: keeposz.dev
 git_repo: git@github.com:Keeposz/nas-pi-cluster.git
